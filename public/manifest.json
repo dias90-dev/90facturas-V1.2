@@ -1,0 +1,16 @@
+{
+  "short_name": "Gestoke",
+  "name": "Gestoke - Gestão e Faturação",
+  "icons": [
+    {
+      "src": "https://cdn-icons-png.flaticon.com/512/3214/3214736.png",
+      "sizes": "192x192 512x512",
+      "type": "image/png"
+    }
+  ],
+  "start_url": "/",
+  "display": "standalone",
+  "theme_color": "#0f172a",
+  "background_color": "#f8fafc",
+  "orientation": "portrait"
+}
