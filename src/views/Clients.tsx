@@ -1,15 +1,33 @@
 import React, { useState } from 'react';
 import { useApp } from '../context/AppContext';
-import { Users, Plus, Search, Edit2 } from 'lucide-react';
+import { Users, Plus, Search, Edit2, X, Trash2 } from 'lucide-react';
 
 export const Clients: React.FC = () => {
-  const { clientes } = useApp();
+  const { clientes, addCliente, deleteCliente } = useApp();
   const [searchTerm, setSearchTerm] = useState('');
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [newCliente, setNewCliente] = useState({
+    nome: '',
+    nif: '',
+    email: '',
+    telefone: '',
+    endereco: ''
+  });
 
   const filtered = clientes.filter(c => 
     c.nome.toLowerCase().includes(searchTerm.toLowerCase()) ||
     c.email.toLowerCase().includes(searchTerm.toLowerCase())
   );
+
+  const handleAddCliente = async (e: React.FormEvent) => {
+    e.preventDefault();
+    await addCliente({
+      ...newCliente,
+      data_cadastro: new Date().toISOString()
+    });
+    setIsModalOpen(false);
+    setNewCliente({ nome: '', nif: '', email: '', telefone: '', endereco: '' });
+  };
 
   return (
     <div className="space-y-6">
@@ -18,7 +36,10 @@ export const Clients: React.FC = () => {
           <h2 className="text-2xl font-bold tracking-tight">Clientes</h2>
           <p className="text-slate-500">Gestão e acompanhamento de clientes</p>
         </div>
-        <button className="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-lg font-medium flex items-center gap-2 transition-colors">
+        <button 
+          onClick={() => setIsModalOpen(true)}
+          className="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-lg font-medium flex items-center gap-2 transition-colors"
+        >
           <Plus className="w-5 h-5" /> Novo Cliente
         </button>
       </div>
@@ -58,9 +79,14 @@ export const Clients: React.FC = () => {
                   <td className="px-6 py-4 text-slate-500">{client.telefone}</td>
                   <td className="px-6 py-4 text-slate-500">{client.endereco}</td>
                   <td className="px-6 py-4 text-right">
-                    <button className="p-1.5 text-slate-400 hover:text-indigo-600 rounded-md hover:bg-slate-100 transition-colors">
-                      <Edit2 className="w-4 h-4" />
-                    </button>
+                    <div className="flex justify-end gap-2">
+                      <button className="p-1.5 text-slate-400 hover:text-indigo-600 rounded-md hover:bg-slate-100 transition-colors">
+                        <Edit2 className="w-4 h-4" />
+                      </button>
+                      <button onClick={() => deleteCliente(client.id)} className="p-1.5 text-slate-400 hover:text-red-600 rounded-md hover:bg-slate-100 transition-colors">
+                        <Trash2 className="w-4 h-4" />
+                      </button>
+                    </div>
                   </td>
                 </tr>
               ))}
@@ -68,6 +94,88 @@ export const Clients: React.FC = () => {
           </table>
         </div>
       </div>
+
+      {/* Modal Adicionar Cliente */}
+      {isModalOpen && (
+        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4 z-50">
+          <div className="bg-white rounded-2xl w-full max-w-lg overflow-hidden shadow-2xl">
+            <div className="p-6 border-b border-slate-100 flex justify-between items-center bg-slate-50">
+              <h3 className="text-xl font-bold text-slate-900">Novo Cliente</h3>
+              <button 
+                onClick={() => setIsModalOpen(false)}
+                className="text-slate-400 hover:text-slate-600 transition-colors"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+            <form onSubmit={handleAddCliente} className="p-6 space-y-4">
+              <div className="space-y-1.5">
+                <label className="text-sm font-medium text-slate-700">Nome do Cliente *</label>
+                <input 
+                  required
+                  type="text" 
+                  value={newCliente.nome}
+                  onChange={e => setNewCliente({...newCliente, nome: e.target.value})}
+                  className="w-full px-3 py-2 rounded-lg border border-slate-200 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500"
+                />
+              </div>
+              <div className="grid grid-cols-2 gap-4">
+                <div className="space-y-1.5">
+                  <label className="text-sm font-medium text-slate-700">NIF</label>
+                  <input 
+                    type="text" 
+                    value={newCliente.nif}
+                    onChange={e => setNewCliente({...newCliente, nif: e.target.value})}
+                    className="w-full px-3 py-2 rounded-lg border border-slate-200 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500"
+                  />
+                </div>
+                <div className="space-y-1.5">
+                  <label className="text-sm font-medium text-slate-700">Telefone</label>
+                  <input 
+                    type="text" 
+                    value={newCliente.telefone}
+                    onChange={e => setNewCliente({...newCliente, telefone: e.target.value})}
+                    className="w-full px-3 py-2 rounded-lg border border-slate-200 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500"
+                  />
+                </div>
+              </div>
+              <div className="space-y-1.5">
+                <label className="text-sm font-medium text-slate-700">Email</label>
+                <input 
+                  type="email" 
+                  value={newCliente.email}
+                  onChange={e => setNewCliente({...newCliente, email: e.target.value})}
+                  className="w-full px-3 py-2 rounded-lg border border-slate-200 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500"
+                />
+              </div>
+              <div className="space-y-1.5">
+                <label className="text-sm font-medium text-slate-700">Endereço</label>
+                <input 
+                  type="text" 
+                  value={newCliente.endereco}
+                  onChange={e => setNewCliente({...newCliente, endereco: e.target.value})}
+                  className="w-full px-3 py-2 rounded-lg border border-slate-200 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500"
+                />
+              </div>
+              <div className="flex justify-end gap-3 pt-6 border-t border-slate-100 mt-6">
+                <button 
+                  type="button"
+                  onClick={() => setIsModalOpen(false)}
+                  className="px-4 py-2 font-medium text-slate-600 hover:text-slate-900 transition-colors"
+                >
+                  Cancelar
+                </button>
+                <button 
+                  type="submit"
+                  className="bg-indigo-600 hover:bg-indigo-700 text-white px-6 py-2 rounded-lg font-medium transition-colors shadow-sm"
+                >
+                  Guardar Cliente
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

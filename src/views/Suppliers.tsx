@@ -1,15 +1,30 @@
 import React, { useState } from 'react';
 import { useApp } from '../context/AppContext';
-import { Truck, Plus, Search, Edit2 } from 'lucide-react';
+import { Truck, Plus, Search, Edit2, X, Trash2 } from 'lucide-react';
 
 export const Suppliers: React.FC = () => {
-  const { fornecedores } = useApp();
+  const { fornecedores, addFornecedor } = useApp();
   const [searchTerm, setSearchTerm] = useState('');
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [newFornecedor, setNewFornecedor] = useState({
+    nome: '',
+    nif: '',
+    email: '',
+    contato: '',
+    endereco: ''
+  });
 
   const filtered = fornecedores.filter(s => 
     s.nome.toLowerCase().includes(searchTerm.toLowerCase()) ||
     s.email.toLowerCase().includes(searchTerm.toLowerCase())
   );
+
+  const handleAddFornecedor = async (e: React.FormEvent) => {
+    e.preventDefault();
+    await addFornecedor(newFornecedor);
+    setIsModalOpen(false);
+    setNewFornecedor({ nome: '', nif: '', email: '', contato: '', endereco: '' });
+  };
 
   return (
     <div className="space-y-6">
@@ -18,7 +33,10 @@ export const Suppliers: React.FC = () => {
           <h2 className="text-2xl font-bold tracking-tight">Fornecedores</h2>
           <p className="text-slate-500">Gestão de parceiros e encomendas</p>
         </div>
-        <button className="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-lg font-medium flex items-center gap-2 transition-colors">
+        <button 
+          onClick={() => setIsModalOpen(true)}
+          className="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-lg font-medium flex items-center gap-2 transition-colors"
+        >
           <Plus className="w-5 h-5" /> Novo Fornecedor
         </button>
       </div>
@@ -58,9 +76,11 @@ export const Suppliers: React.FC = () => {
                   <td className="px-6 py-4 text-slate-500">{supplier.contato}</td>
                   <td className="px-6 py-4 text-slate-500">{supplier.endereco}</td>
                   <td className="px-6 py-4 text-right">
-                    <button className="p-1.5 text-slate-400 hover:text-indigo-600 rounded-md hover:bg-slate-100 transition-colors">
-                      <Edit2 className="w-4 h-4" />
-                    </button>
+                    <div className="flex justify-end gap-2">
+                      <button className="p-1.5 text-slate-400 hover:text-indigo-600 rounded-md hover:bg-slate-100 transition-colors">
+                        <Edit2 className="w-4 h-4" />
+                      </button>
+                    </div>
                   </td>
                 </tr>
               ))}
@@ -68,6 +88,88 @@ export const Suppliers: React.FC = () => {
           </table>
         </div>
       </div>
+
+      {/* Modal Adicionar Fornecedor */}
+      {isModalOpen && (
+        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4 z-50">
+          <div className="bg-white rounded-2xl w-full max-w-lg overflow-hidden shadow-2xl">
+            <div className="p-6 border-b border-slate-100 flex justify-between items-center bg-slate-50">
+              <h3 className="text-xl font-bold text-slate-900">Novo Fornecedor</h3>
+              <button 
+                onClick={() => setIsModalOpen(false)}
+                className="text-slate-400 hover:text-slate-600 transition-colors"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+            <form onSubmit={handleAddFornecedor} className="p-6 space-y-4">
+              <div className="space-y-1.5">
+                <label className="text-sm font-medium text-slate-700">Nome do Fornecedor *</label>
+                <input 
+                  required
+                  type="text" 
+                  value={newFornecedor.nome}
+                  onChange={e => setNewFornecedor({...newFornecedor, nome: e.target.value})}
+                  className="w-full px-3 py-2 rounded-lg border border-slate-200 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500"
+                />
+              </div>
+              <div className="grid grid-cols-2 gap-4">
+                <div className="space-y-1.5">
+                  <label className="text-sm font-medium text-slate-700">NIF</label>
+                  <input 
+                    type="text" 
+                    value={newFornecedor.nif}
+                    onChange={e => setNewFornecedor({...newFornecedor, nif: e.target.value})}
+                    className="w-full px-3 py-2 rounded-lg border border-slate-200 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500"
+                  />
+                </div>
+                <div className="space-y-1.5">
+                  <label className="text-sm font-medium text-slate-700">Contato / Telefone</label>
+                  <input 
+                    type="text" 
+                    value={newFornecedor.contato}
+                    onChange={e => setNewFornecedor({...newFornecedor, contato: e.target.value})}
+                    className="w-full px-3 py-2 rounded-lg border border-slate-200 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500"
+                  />
+                </div>
+              </div>
+              <div className="space-y-1.5">
+                <label className="text-sm font-medium text-slate-700">Email</label>
+                <input 
+                  type="email" 
+                  value={newFornecedor.email}
+                  onChange={e => setNewFornecedor({...newFornecedor, email: e.target.value})}
+                  className="w-full px-3 py-2 rounded-lg border border-slate-200 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500"
+                />
+              </div>
+              <div className="space-y-1.5">
+                <label className="text-sm font-medium text-slate-700">Endereço</label>
+                <input 
+                  type="text" 
+                  value={newFornecedor.endereco}
+                  onChange={e => setNewFornecedor({...newFornecedor, endereco: e.target.value})}
+                  className="w-full px-3 py-2 rounded-lg border border-slate-200 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500"
+                />
+              </div>
+              <div className="flex justify-end gap-3 pt-6 border-t border-slate-100 mt-6">
+                <button 
+                  type="button"
+                  onClick={() => setIsModalOpen(false)}
+                  className="px-4 py-2 font-medium text-slate-600 hover:text-slate-900 transition-colors"
+                >
+                  Cancelar
+                </button>
+                <button 
+                  type="submit"
+                  className="bg-indigo-600 hover:bg-indigo-700 text-white px-6 py-2 rounded-lg font-medium transition-colors shadow-sm"
+                >
+                  Guardar Fornecedor
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

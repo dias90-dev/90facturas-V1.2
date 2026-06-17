@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useState, useEffect, useMemo } from 'react';
-import { Produto, Cliente, Fornecedor, Fatura, DashboardStats } from '../types';
+import { Produto, Cliente, Fornecedor, Fatura, DashboardStats, StoreSettings } from '../types';
 import { supabase, hasSupabaseConfig } from '../lib/supabase';
 
 interface AppContextType {
@@ -8,6 +8,7 @@ interface AppContextType {
   fornecedores: Fornecedor[];
   faturas: Fatura[];
   stats: DashboardStats;
+  settings: StoreSettings;
   addProduto: (p: Partial<Produto>) => Promise<void>;
   updateProduto: (p: Produto) => Promise<void>;
   deleteProduto: (id: string) => Promise<void>;
@@ -17,7 +18,17 @@ interface AppContextType {
   addFornecedor: (s: Partial<Fornecedor>) => Promise<void>;
   addFatura: (i: Partial<Fatura>) => Promise<void>;
   exportBackup: () => void;
+  updateSettings: (s: StoreSettings) => void;
 }
+
+const defaultSettings: StoreSettings = {
+  nome_loja: 'GESTOKE',
+  vendedor: 'Atendente',
+  nif: '000000000',
+  telefone: '999 999 999',
+  endereco: 'Endereço da Loja',
+  logotipo: '/logo.png'
+};
 
 // Fallback Mocks temporários caso o Supabase não esteja ligado
 const mockProdutos: Produto[] = [
@@ -41,6 +52,16 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   const [clientes, setClientes] = useState<Cliente[]>(hasSupabaseConfig ? [] : mockClientes);
   const [fornecedores, setFornecedores] = useState<Fornecedor[]>(hasSupabaseConfig ? [] : mockFornecedores);
   const [faturas, setFaturas] = useState<Fatura[]>(hasSupabaseConfig ? [] : mockFaturas);
+  
+  const [settings, setSettings] = useState<StoreSettings>(() => {
+    const s = localStorage.getItem('gestoke_settings');
+    return s ? JSON.parse(s) : defaultSettings;
+  });
+
+  const updateSettings = (s: StoreSettings) => {
+    setSettings(s);
+    localStorage.setItem('gestoke_settings', JSON.stringify(s));
+  };
 
   useEffect(() => {
     if (hasSupabaseConfig && supabase) {
@@ -157,6 +178,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       clientes,
       fornecedores,
       faturas,
+      settings,
       timestamp: new Date().toISOString()
     };
     
@@ -177,10 +199,10 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
 
   return (
     <AppContext.Provider value={{ 
-      produtos, clientes, fornecedores, faturas, stats, 
+      produtos, clientes, fornecedores, faturas, stats, settings,
       addProduto, updateProduto, deleteProduto, 
       addCliente, updateCliente, deleteCliente, 
-      addFornecedor, addFatura, exportBackup 
+      addFornecedor, addFatura, exportBackup, updateSettings
     }}>
       {children}
     </AppContext.Provider>

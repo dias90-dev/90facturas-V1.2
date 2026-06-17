@@ -12,6 +12,7 @@ import { Invoices } from './views/Invoices';
 import { Clients } from './views/Clients';
 import { Suppliers } from './views/Suppliers';
 import { Reports } from './views/Reports';
+import { Settings } from './views/Settings';
 
 function MainApp() {
   const [activeView, setActiveView] = useState('dashboard');
@@ -24,6 +25,7 @@ function MainApp() {
       case 'clients': return <Clients />;
       case 'suppliers': return <Suppliers />;
       case 'reports': return <Reports />;
+      case 'settings': return <Settings />;
       default: return <Dashboard />;
     }
   };

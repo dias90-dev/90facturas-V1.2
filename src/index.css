@@ -12,3 +12,48 @@ body {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
+
+@media print {
+  body * {
+    visibility: hidden;
+  }
+  #printable-area, #printable-area * {
+    visibility: visible;
+  }
+  #printable-area {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+    margin: 0;
+    padding: 0;
+  }
+
+  /* Impressão Térmica 80mm */
+  body.print-thermal {
+    margin: 0;
+    padding: 0;
+  }
+  body.print-thermal #printable-area {
+    width: 80mm !important;
+    max-width: 80mm;
+    margin: 0 auto;
+    font-size: 11px;
+  }
+  
+  /* Impressão A4 */
+  body.print-a4 {
+    margin: 0;
+    padding: 0;
+  }
+  body.print-a4 #printable-area {
+    width: 210mm !important;
+    max-width: 210mm;
+    margin: 0 auto;
+    padding: 10mm;
+  }
+
+  .no-print {
+    display: none !important;
+  }
+}

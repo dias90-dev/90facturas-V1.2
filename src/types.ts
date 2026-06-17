@@ -48,6 +48,16 @@ export type Fatura = {
   total: number;
   estado: FaturaEstado;
   forma_pagamento: string;
+  itens?: ItemFatura[];
+};
+
+export type StoreSettings = {
+  nome_loja: string;
+  vendedor: string;
+  nif: string;
+  telefone: string;
+  endereco: string;
+  logotipo: string;
 };
 
 export type DashboardStats = {

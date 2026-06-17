@@ -1,12 +1,28 @@
 import React, { useState } from 'react';
 import { useApp } from '../context/AppContext';
-import { FileText, Plus, Search, Eye } from 'lucide-react';
+import { FileText, Plus, Search, Eye, X, Trash2, ScanLine } from 'lucide-react';
+import { InvoicePrintModal } from '../components/InvoicePrintModal';
+import { BarcodeScannerModal } from '../components/BarcodeScannerModal';
+import { Fatura } from '../types';
 
 export const Invoices: React.FC = () => {
-  const { faturas, clientes } = useApp();
+  const { faturas, clientes, produtos, addFatura, settings } = useApp();
   const [searchTerm, setSearchTerm] = useState('');
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  
+  const [isScannerOpen, setIsScannerOpen] = useState(false);
+  const [previewFatura, setPreviewFatura] = useState<Fatura | null>(null);
 
+  const [selectedCliente, setSelectedCliente] = useState('');
+  const [selectedProducts, setSelectedProducts] = useState<{produto_id: string, quantidade: number}[]>([]);
+  const [currentProductSelector, setCurrentProductSelector] = useState('');
+  
   const getClientName = (id: string) => clientes.find(c => c.id === id)?.nome || 'Cliente Desconhecido';
+  const getClient = (id: string) => clientes.find(c => c.id === id);
+  const getProductName = (id: string) => produtos.find(p => p.id === id)?.nome || '';
+  const getProductPrice = (id: string) => produtos.find(p => p.id === id)?.preco_venda || 0;
+
+  const currentTotal = selectedProducts.reduce((acc, item) => acc + (getProductPrice(item.produto_id) * item.quantidade), 0);
 
   const filtered = faturas.filter(inv => 
     inv.numero_fatura.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -17,6 +33,58 @@ export const Invoices: React.FC = () => {
     return new Intl.NumberFormat('pt-AO', { style: 'currency', currency: 'AOA' }).format(value);
   };
 
+  const handleAddProduct = () => {
+    if (currentProductSelector && !selectedProducts.find(p => p.produto_id === currentProductSelector)) {
+      setSelectedProducts([...selectedProducts, { produto_id: currentProductSelector, quantidade: 1 }]);
+      setCurrentProductSelector('');
+    }
+  };
+
+  const handleScanProduct = (code: string) => {
+    const foundProduct = produtos.find(p => p.codigo === code);
+    if (foundProduct) {
+      if (!selectedProducts.find(p => p.produto_id === foundProduct.id)) {
+        setSelectedProducts([...selectedProducts, { produto_id: foundProduct.id, quantidade: 1 }]);
+      }
+    } else {
+      alert(`Artigo não encontrado para o código: ${code}`);
+    }
+  };
+
+  const handleUpdateQuantity = (id: string, qty: number) => {
+    setSelectedProducts(selectedProducts.map(p => p.produto_id === id ? { ...p, quantidade: Math.max(1, qty) } : p));
+  };
+
+  const handleRemoveProduct = (id: string) => {
+    setSelectedProducts(selectedProducts.filter(p => p.produto_id !== id));
+  };
+
+  const handleGenerateInvoice = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!selectedCliente || selectedProducts.length === 0) return;
+
+    await addFatura({
+      numero_fatura: `FT-${new Date().getFullYear()}-${Math.floor(Math.random() * 10000).toString().padStart(4, '0')}`,
+      cliente_id: selectedCliente,
+      data: new Date().toISOString(),
+      estado: 'pendente',
+      total: currentTotal,
+      forma_pagamento: 'Transferência Bancária',
+      itens: selectedProducts.map(sel => ({
+        id: Math.random().toString(),
+        fatura_id: '',
+        produto_id: sel.produto_id,
+        quantidade: sel.quantidade,
+        preco_unitario: getProductPrice(sel.produto_id),
+        subtotal: getProductPrice(sel.produto_id) * sel.quantidade
+      }))
+    });
+
+    setIsModalOpen(false);
+    setSelectedCliente('');
+    setSelectedProducts([]);
+  };
+
   return (
     <div className="space-y-6">
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
@@ -24,7 +92,10 @@ export const Invoices: React.FC = () => {
           <h2 className="text-2xl font-bold tracking-tight">Faturas</h2>
           <p className="text-slate-500">Gestão de facturação</p>
         </div>
-        <button className="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-lg font-medium flex items-center gap-2 transition-colors">
+        <button 
+          onClick={() => setIsModalOpen(true)}
+          className="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-lg font-medium flex items-center gap-2 transition-colors"
+        >
           <Plus className="w-5 h-5" /> Nova Fatura
         </button>
       </div>
@@ -74,7 +145,10 @@ export const Invoices: React.FC = () => {
                   </td>
                   <td className="px-6 py-4 text-right font-bold text-slate-900">{formatKz(inv.total)}</td>
                   <td className="px-6 py-4 text-right">
-                    <button className="p-1.5 text-slate-400 hover:text-indigo-600 rounded-md hover:bg-slate-100 transition-colors">
+                    <button 
+                      onClick={() => setPreviewFatura(inv)}
+                      className="p-1.5 text-slate-400 hover:text-indigo-600 rounded-md hover:bg-slate-100 transition-colors"
+                    >
                       <Eye className="w-4 h-4" />
                     </button>
                   </td>
@@ -84,6 +158,143 @@ export const Invoices: React.FC = () => {
           </table>
         </div>
       </div>
+
+      {previewFatura && (
+        <InvoicePrintModal 
+          fatura={previewFatura}
+          cliente={getClient(previewFatura.cliente_id)}
+          settings={settings}
+          produtos={produtos}
+          onClose={() => setPreviewFatura(null)}
+        />
+      )}
+
+      {/* Modal Nova Fatura */}
+      {isModalOpen && (
+        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4 z-50">
+          <div className="bg-white rounded-2xl w-full max-w-2xl overflow-hidden shadow-2xl flex flex-col max-h-[90vh]">
+            <div className="p-6 border-b border-slate-100 flex justify-between items-center bg-slate-50 shrink-0">
+              <h3 className="text-xl font-bold text-slate-900">Nova Fatura</h3>
+              <button 
+                onClick={() => setIsModalOpen(false)}
+                className="text-slate-400 hover:text-slate-600 transition-colors"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+            <form onSubmit={handleGenerateInvoice} className="flex flex-col flex-1 overflow-hidden">
+              <div className="p-6 space-y-6 overflow-y-auto">
+                <div className="space-y-1.5">
+                  <label className="text-sm font-medium text-slate-700">Selecionar Cliente *</label>
+                  <select 
+                    required
+                    value={selectedCliente}
+                    onChange={(e) => setSelectedCliente(e.target.value)}
+                    className="w-full px-3 py-2 rounded-lg border border-slate-200 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500"
+                  >
+                    <option value="" disabled>Escolha um cliente...</option>
+                    {clientes.map(c => (
+                      <option key={c.id} value={c.id}>{c.nome}</option>
+                    ))}
+                  </select>
+                </div>
+
+                <div className="space-y-3 bg-slate-50 p-4 rounded-xl border border-slate-100">
+                  <label className="text-sm font-medium text-slate-700 block">Adicionar Artigos</label>
+                  <div className="flex flex-col sm:flex-row gap-2">
+                    <select 
+                      value={currentProductSelector}
+                      onChange={(e) => setCurrentProductSelector(e.target.value)}
+                      className="flex-1 px-3 py-2 rounded-lg border border-slate-200 focus:outline-none focus:ring-2 focus:ring-purple-500/20 focus:border-purple-500"
+                    >
+                      <option value="" disabled>Escolha um artigo...</option>
+                      {produtos.map(p => (
+                        <option key={p.id} value={p.id}>{p.nome} - {formatKz(p.preco_venda)}</option>
+                      ))}
+                    </select>
+                    <div className="flex gap-2">
+                      <button 
+                        type="button"
+                        onClick={handleAddProduct}
+                        className="bg-slate-200 hover:bg-slate-300 text-slate-700 px-4 py-2 rounded-lg font-medium transition-colors"
+                      >
+                        Adicionar
+                      </button>
+                      <button 
+                        type="button"
+                        onClick={() => setIsScannerOpen(true)}
+                        className="bg-slate-100 hover:bg-slate-200 text-slate-600 px-3 py-2 border border-slate-200 rounded-lg flex items-center transition-colors"
+                        title="Escanear Código de Barras"
+                      >
+                        <ScanLine className="w-5 h-5" />
+                      </button>
+                    </div>
+                  </div>
+
+                  {selectedProducts.length > 0 && (
+                    <div className="mt-4 space-y-2">
+                      {selectedProducts.map(sel => (
+                        <div key={sel.produto_id} className="flex items-center justify-between bg-white p-3 rounded border border-slate-200">
+                          <div className="flex-1">
+                            <p className="font-medium text-sm">{getProductName(sel.produto_id)}</p>
+                            <p className="text-xs text-slate-500">{formatKz(getProductPrice(sel.produto_id))} un.</p>
+                          </div>
+                          <div className="flex items-center gap-4">
+                            <input 
+                              type="number"
+                              min="1"
+                              value={sel.quantidade}
+                              onChange={(e) => handleUpdateQuantity(sel.produto_id, parseInt(e.target.value) || 1)}
+                              className="w-16 px-2 py-1 text-sm border border-slate-200 rounded text-center"
+                            />
+                            <p className="font-medium text-sm w-24 text-right">
+                              {formatKz(getProductPrice(sel.produto_id) * sel.quantidade)}
+                            </p>
+                            <button 
+                              type="button"
+                              onClick={() => handleRemoveProduct(sel.produto_id)}
+                              className="text-red-500 hover:bg-red-50 p-1.5 rounded-md transition-colors"
+                            >
+                              <Trash2 className="w-4 h-4" />
+                            </button>
+                          </div>
+                        </div>
+                      ))}
+                      <div className="flex justify-between items-center pt-4 border-t border-slate-200 mt-4">
+                        <span className="font-medium text-slate-500">Total a Pagar</span>
+                        <span className="text-xl font-bold text-indigo-700">{formatKz(currentTotal)}</span>
+                      </div>
+                    </div>
+                  )}
+                </div>
+              </div>
+              
+              <div className="flex justify-end gap-3 p-6 border-t border-slate-100 bg-white shrink-0">
+                <button 
+                  type="button"
+                  onClick={() => setIsModalOpen(false)}
+                  className="px-4 py-2 font-medium text-slate-600 hover:text-slate-900 transition-colors"
+                >
+                  Cancelar
+                </button>
+                <button 
+                  type="submit"
+                  disabled={!selectedCliente || selectedProducts.length === 0}
+                  className="bg-indigo-600 hover:bg-indigo-700 disabled:opacity-50 disabled:cursor-not-allowed text-white px-6 py-2 rounded-lg font-medium transition-colors shadow-sm"
+                >
+                  Confirmar Fatura
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+      {isScannerOpen && (
+        <BarcodeScannerModal 
+          onScan={handleScanProduct}
+          onClose={() => setIsScannerOpen(false)}
+        />
+      )}
     </div>
   );
 };
