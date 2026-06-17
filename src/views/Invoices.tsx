@@ -1,15 +1,24 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useApp } from '../context/AppContext';
-import { FileText, Plus, Search, Eye, X, Trash2, ScanLine } from 'lucide-react';
+import { FileText, Plus, Search, Eye, X, Trash2, ScanLine, Mic, MicOff } from 'lucide-react';
 import { InvoicePrintModal } from '../components/InvoicePrintModal';
 import { BarcodeScannerModal } from '../components/BarcodeScannerModal';
 import { Fatura } from '../types';
+import { useSpeechRecognition } from '../hooks/useSpeechRecognition';
 
 export const Invoices: React.FC = () => {
   const { faturas, clientes, produtos, addFatura, settings } = useApp();
   const [searchTerm, setSearchTerm] = useState('');
   const [isModalOpen, setIsModalOpen] = useState(false);
   
+  const { isListening, transcript, startListening, stopListening } = useSpeechRecognition();
+
+  useEffect(() => {
+    if (transcript) {
+      setSearchTerm(transcript);
+    }
+  }, [transcript]);
+
   const [isScannerOpen, setIsScannerOpen] = useState(false);
   const [previewFatura, setPreviewFatura] = useState<Fatura | null>(null);
 
@@ -102,15 +111,22 @@ export const Invoices: React.FC = () => {
 
       <div className="bg-white rounded-xl shadow-sm border border-slate-100 overflow-hidden">
         <div className="p-4 border-b border-slate-100">
-          <div className="relative max-w-sm">
+          <div className="relative max-w-sm flex">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 w-5 h-5" />
             <input 
               type="text"
-              placeholder="Pesquisar fatura ou cliente..."
-              className="w-full pl-10 pr-4 py-2 rounded-lg border border-slate-200 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500"
+              placeholder={isListening ? "Ouvindo..." : "Pesquisar fatura ou cliente..."}
+              className={`w-full pl-10 pr-10 py-2 rounded-lg border focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 transition-colors ${isListening ? 'border-indigo-400 bg-indigo-50' : 'border-slate-200'}`}
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
             />
+            <button 
+              onClick={isListening ? stopListening : startListening}
+              className={`absolute right-3 top-1/2 -translate-y-1/2 transition-colors ${isListening ? 'text-indigo-600' : 'text-slate-400 hover:text-indigo-600'}`}
+              title="Pesquisar por Voz"
+            >
+              {isListening ? <Mic className="w-5 h-5 animate-pulse" /> : <MicOff className="w-5 h-5" />}
+            </button>
           </div>
         </div>
         

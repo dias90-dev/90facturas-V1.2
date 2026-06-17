@@ -1,15 +1,24 @@
 import React, { useRef, useState } from 'react';
 import { useApp } from '../context/AppContext';
-import { Package, Plus, Search, Edit2, Trash2, X, AlertTriangle, Download, Upload, ScanLine, QrCode } from 'lucide-react';
+import { Package, Plus, Search, Edit2, Trash2, X, AlertTriangle, Download, Upload, ScanLine, QrCode, Mic, MicOff } from 'lucide-react';
 import { BarcodeScannerModal } from '../components/BarcodeScannerModal';
 import { ProductQRCodeModal } from '../components/ProductQRCodeModal';
 import { Produto } from '../types';
+import { useSpeechRecognition } from '../hooks/useSpeechRecognition';
 
 export const Inventory: React.FC = () => {
   const { produtos, deleteProduto, addProduto } = useApp();
   const [searchTerm, setSearchTerm] = useState('');
   const fileInputRef = useRef<HTMLInputElement>(null);
   
+  const { isListening, transcript, startListening, stopListening } = useSpeechRecognition();
+
+  React.useEffect(() => {
+    if (transcript) {
+      setSearchTerm(transcript);
+    }
+  }, [transcript]);
+
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isScannerOpen, setIsScannerOpen] = useState(false);
   const [qrProduct, setQrProduct] = useState<Produto | null>(null);
@@ -169,11 +178,18 @@ export const Inventory: React.FC = () => {
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 w-5 h-5" />
               <input 
                 type="text"
-                placeholder="Pesquisar por nome ou Código..."
-                className="w-full pl-10 pr-4 py-2 rounded-lg border border-slate-200 focus:outline-none focus:ring-2 focus:ring-purple-500/20 focus:border-purple-500"
+                placeholder={isListening ? "Ouvindo..." : "Pesquisar por nome ou Código..."}
+                className={`w-full pl-10 pr-10 py-2 rounded-lg border focus:outline-none focus:ring-2 focus:ring-purple-500/20 focus:border-purple-500 transition-colors ${isListening ? 'border-purple-400 bg-purple-50' : 'border-slate-200'}`}
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
               />
+              <button 
+                onClick={isListening ? stopListening : startListening}
+                className={`absolute right-3 top-1/2 -translate-y-1/2 transition-colors ${isListening ? 'text-purple-600' : 'text-slate-400 hover:text-purple-600'}`}
+                title="Pesquisar por Voz"
+              >
+                {isListening ? <Mic className="w-5 h-5 animate-pulse" /> : <MicOff className="w-5 h-5" />}
+              </button>
             </div>
             <button 
               onClick={() => setIsScannerOpen(true)}
