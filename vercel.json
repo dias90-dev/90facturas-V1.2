@@ -5,5 +5,7 @@
       "destination": "/index.html"
     }
   ],
-  "cleanUrls": true
+  "buildCommand": "npm install && vite build",
+  "outputDirectory": "dist",
+  "framework": "vite"
 }
