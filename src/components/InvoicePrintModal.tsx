@@ -37,20 +37,20 @@ export const InvoicePrintModal: React.FC<InvoicePrintModalProps> = ({
 
   return (
     <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4 z-[60]">
-      <div className="bg-white rounded-2xl w-full max-w-4xl overflow-hidden shadow-2xl flex flex-col max-h-[90vh]">
+      <div className="bg-[#0A0A0A] rounded-2xl w-full max-w-4xl overflow-hidden shadow-2xl flex flex-col max-h-[90vh]">
         {/* Header Modal - Hide on Print */}
-        <div className="p-4 border-b border-slate-100 flex justify-between items-center bg-slate-50 shrink-0 no-print">
-          <h3 className="text-xl font-bold text-slate-900">Pré-visualização da Fatura</h3>
+        <div className="p-4 border-b border-[#27272A] flex justify-between items-center bg-[#0A0A0A] shrink-0 no-print">
+          <h3 className="text-xl font-bold text-[#FFFFFF]">Pré-visualização da Fatura</h3>
           <div className="flex items-center gap-2">
             <button 
               onClick={() => handlePrint('a4')}
-              className="bg-purple-600 hover:bg-purple-700 text-white px-3 py-1.5 rounded-md font-medium text-sm flex items-center gap-2 transition-colors"
+              className="bg-[#7B2CF5] hover:bg-purple-700 text-white px-3 py-1.5 rounded-md font-medium text-sm flex items-center gap-2 transition-colors"
             >
               <Printer className="w-4 h-4" /> A4
             </button>
             <button 
               onClick={() => handlePrint('thermal')}
-              className="bg-slate-800 hover:bg-slate-900 text-white px-3 py-1.5 rounded-md font-medium text-sm flex items-center gap-2 transition-colors"
+              className="bg-slate-800 hover:bg-[#000000] text-white px-3 py-1.5 rounded-md font-medium text-sm flex items-center gap-2 transition-colors"
             >
               <Printer className="w-4 h-4" /> Cupão Térmico
             </button>
@@ -62,7 +62,7 @@ export const InvoicePrintModal: React.FC<InvoicePrintModalProps> = ({
             </button>
             <button 
               onClick={onClose}
-              className="ml-2 p-1.5 text-slate-400 hover:text-slate-600 transition-colors bg-white rounded-md border border-slate-200"
+              className="ml-2 p-1.5 text-slate-400 hover:text-[#B4B4B4] transition-colors bg-[#0A0A0A] rounded-md border border-[#27272A]"
             >
               <X className="w-5 h-5" />
             </button>
@@ -70,44 +70,44 @@ export const InvoicePrintModal: React.FC<InvoicePrintModalProps> = ({
         </div>
 
         {/* Printable Area */}
-        <div className="flex-1 overflow-y-auto p-4 md:p-8 bg-slate-100 no-print flex justify-center">
+        <div className="flex-1 overflow-y-auto p-4 md:p-8 bg-[#18181A] no-print flex justify-center">
           
           <div 
             id="printable-area" 
             ref={contentRef}
-            className="bg-white shadow-sm border border-slate-200 p-8 w-full max-w-2xl mx-auto"
+            className="bg-[#0A0A0A] print:bg-white shadow-sm border border-[#27272A] print:border-none p-8 w-full max-w-2xl mx-auto text-[#FFFFFF] print:text-black"
           >
             {/* Header da Fatura */}
-            <div className="flex justify-between items-start border-b border-slate-200 pb-6 mb-6">
+            <div className="flex justify-between items-start border-b border-[#27272A] print:border-black/20 pb-6 mb-6">
               <div className="space-y-1">
                 {settings.logotipo && (
                   <img src={settings.logotipo} alt="Logo" className="h-16 max-w-full mb-4 object-contain" />
                 )}
-                <h1 className="text-2xl font-bold text-slate-900 uppercase tracking-wider">{settings.nome_loja}</h1>
-                <p className="text-slate-600 text-sm">NIF: {settings.nif}</p>
-                <p className="text-slate-600 text-sm">{settings.endereco}</p>
-                <p className="text-slate-600 text-sm">{settings.telefone}</p>
+                <h1 className="text-2xl font-bold uppercase tracking-wider">{settings.nome_loja}</h1>
+                <p className="text-[#B4B4B4] print:text-black/80 text-sm">NIF: {settings.nif}</p>
+                <p className="text-[#B4B4B4] print:text-black/80 text-sm">{settings.endereco}</p>
+                <p className="text-[#B4B4B4] print:text-black/80 text-sm">Contatos: {settings.telefone} • {settings.email}</p>
               </div>
               <div className="text-right space-y-1">
-                <h2 className="text-2xl font-bold text-purple-600">FATURA</h2>
-                <p className="text-slate-900 font-medium">#{fatura.numero_fatura}</p>
-                <p className="text-slate-600 text-sm">Data: {new Date(fatura.data).toLocaleDateString('pt-AO')}</p>
-                <p className="text-slate-600 text-sm">Vendedor: {settings.vendedor}</p>
+                <h2 className="text-2xl font-bold text-[#7B2CF5]">FATURA</h2>
+                <p className="font-medium">#{fatura.numero_fatura}</p>
+                <p className="text-[#B4B4B4] print:text-black/80 text-sm">Data: {new Date(fatura.data).toLocaleDateString('pt-AO')} {new Date(fatura.data).toLocaleTimeString('pt-AO')}</p>
+                <p className="text-[#B4B4B4] print:text-black/80 text-sm">Vendedor: {settings.vendedor}</p>
               </div>
             </div>
 
             {/* Dados do Cliente */}
             <div className="mb-8">
-              <h3 className="text-sm font-bold text-slate-400 uppercase tracking-wider mb-2">Faturado a:</h3>
-              <p className="text-slate-900 font-bold">{cliente?.nome || 'Cliente Consumidor Final'}</p>
-              {cliente?.nif && <p className="text-slate-600 text-sm">NIF: {cliente.nif}</p>}
-              {cliente?.endereco && <p className="text-slate-600 text-sm">{cliente.endereco}</p>}
-              {cliente?.telefone && <p className="text-slate-600 text-sm">{cliente.telefone}</p>}
+              <h3 className="text-sm font-bold text-[#B4B4B4] print:text-black/60 uppercase tracking-wider mb-2">Faturado a:</h3>
+              <p className="font-bold">{cliente?.nome || 'Cliente Consumidor Final'}</p>
+              {cliente?.nif && <p className="text-[#B4B4B4] print:text-black/80 text-sm">NIF: {cliente.nif}</p>}
+              {cliente?.endereco && <p className="text-[#B4B4B4] print:text-black/80 text-sm">{cliente.endereco}</p>}
+              {cliente?.telefone && <p className="text-[#B4B4B4] print:text-black/80 text-sm">{cliente.telefone}</p>}
             </div>
 
             {/* Tabela de Itens */}
             <table className="w-full mb-8 text-sm">
-              <thead className="bg-slate-50 text-slate-700">
+              <thead className="bg-[#18181A] print:bg-gray-100 text-[#B4B4B4] print:text-black">
                 <tr>
                   <th className="py-2 px-2 text-left font-semibold">Qtd</th>
                   <th className="py-2 px-2 text-left font-semibold">Descrição</th>
@@ -115,45 +115,44 @@ export const InvoicePrintModal: React.FC<InvoicePrintModalProps> = ({
                   <th className="py-2 px-2 text-right font-semibold">Total</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-slate-100">
+              <tbody className="divide-y divide-[#27272A] print:divide-gray-200">
                 {fatura.itens && fatura.itens.length > 0 ? (
                   fatura.itens.map((item, idx) => (
                     <tr key={idx}>
-                      <td className="py-3 px-2 text-slate-900">{item.quantidade}</td>
-                      <td className="py-3 px-2 text-slate-900">{getProductName(item.produto_id)}</td>
-                      <td className="py-3 px-2 text-right text-slate-600">{formatKz(item.preco_unitario)}</td>
-                      <td className="py-3 px-2 text-right font-medium text-slate-900">{formatKz(item.subtotal)}</td>
+                      <td className="py-3 px-2">{item.quantidade}</td>
+                      <td className="py-3 px-2">{getProductName(item.produto_id)}</td>
+                      <td className="py-3 px-2 text-right text-[#B4B4B4] print:text-black">{formatKz(item.preco_unitario)}</td>
+                      <td className="py-3 px-2 text-right font-medium">{formatKz(item.subtotal)}</td>
                     </tr>
                   ))
                 ) : (
                   <tr>
-                    <td colSpan={4} className="py-4 text-center text-slate-500 italic">Itens não detalhados nesta fatura</td>
+                    <td colSpan={4} className="py-4 text-center text-[#B4B4B4] print:text-gray-500 italic">Itens não detalhados nesta fatura</td>
                   </tr>
                 )}
               </tbody>
               <tfoot>
-                <tr className="border-t-2 border-slate-200">
-                  <td colSpan={3} className="py-4 text-right font-bold text-slate-900">Total a Pagar</td>
-                  <td className="py-4 text-right font-bold text-purple-700 text-lg">{formatKz(fatura.total)}</td>
+                <tr className="border-t-2 border-[#27272A] print:border-black">
+                  <td colSpan={3} className="py-4 text-right font-bold">Total a Pagar</td>
+                  <td className="py-4 text-right font-bold text-[#7B2CF5] print:text-black text-lg">{formatKz(fatura.total)}</td>
                 </tr>
               </tfoot>
             </table>
 
             {/* Restante Info - QR Code e Footer */}
-            <div className="flex justify-between items-end mt-8 border-t border-slate-100 pt-6">
+            <div className="flex justify-between items-end mt-8 border-t border-[#27272A] print:border-black/20 pt-6">
               <div className="space-y-4">
                 <div>
-                  <p className="text-xs font-bold text-slate-400 uppercase">Forma de Pagamento</p>
-                  <p className="text-sm text-slate-900 font-medium">{fatura.forma_pagamento}</p>
+                  <p className="text-xs font-bold text-[#B4B4B4] print:text-black/60 uppercase">Forma de Pagamento</p>
+                  <p className="text-sm font-medium">{fatura.forma_pagamento}</p>
                 </div>
                 <div>
                   <QRCodeSVG value={qrData} size={100} level="M" includeMargin={false} />
                 </div>
               </div>
               <div className="text-right space-y-1 mt-auto pb-2">
-                <p className="text-xs text-slate-400">Gerenciado e desenvolvido pelo</p>
-                <p className="text-sm font-bold text-slate-900">grupo 90 Creations</p>
-                <p className="text-xs text-slate-400">Obrigado pela preferência!</p>
+                <p className="text-xs font-bold text-[#B4B4B4] print:text-black/80">Obrigado pela preferência!</p>
+                <p className="text-xs text-[#B4B4B4] print:text-black/60 mt-2 block">Documento processado por GESTOKE • Gestão Profissional</p>
               </div>
             </div>
           </div>

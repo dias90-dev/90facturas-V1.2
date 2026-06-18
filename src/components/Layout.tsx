@@ -24,7 +24,7 @@ export const Layout: React.FC<LayoutProps> = ({ children, activeView, onNavigate
 
   const navItems = [
     { id: 'dashboard', label: 'Dashboard', icon: LayoutDashboard },
-    { id: 'inventory', label: 'Inventário (Stock)', icon: Package },
+    { id: 'inventory', label: 'Inventário (Estoque)', icon: Package },
     { id: 'invoices', label: 'Faturas', icon: FileText },
     { id: 'clients', label: 'Clientes', icon: Users },
     { id: 'suppliers', label: 'Fornecedores', icon: Truck },
@@ -38,9 +38,9 @@ export const Layout: React.FC<LayoutProps> = ({ children, activeView, onNavigate
   };
 
   return (
-    <div className="flex h-screen bg-slate-50 text-slate-900 font-sans">
+    <div className="flex h-screen bg-[#0A0A0A] text-[#FFFFFF] font-sans">
       {/* Sidebar Desktop */}
-      <aside className="hidden md:flex flex-col w-64 bg-slate-900 text-slate-100 transition-all duration-300">
+      <aside className="hidden md:flex flex-col w-64 bg-[#000000] text-[#B4B4B4] transition-all duration-300">
         <div className="p-6 flex items-center justify-center h-24">
           {settings.logotipo ? (
             <img src={settings.logotipo} alt={settings.nome_loja} className="max-h-full max-w-full object-contain" />
@@ -61,7 +61,7 @@ export const Layout: React.FC<LayoutProps> = ({ children, activeView, onNavigate
                 onClick={() => handleNav(item.id)}
                 className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg transition-colors ${
                   isActive 
-                    ? 'bg-purple-600 text-white' 
+                    ? 'bg-[#7B2CF5] text-white' 
                     : 'text-slate-300 hover:bg-slate-800 hover:text-white'
                 }`}
               >
@@ -71,14 +71,14 @@ export const Layout: React.FC<LayoutProps> = ({ children, activeView, onNavigate
             );
           })}
         </nav>
-        <div className="p-4 text-xs text-slate-500 border-t border-slate-800">
+        <div className="p-4 text-xs text-[#B4B4B4] border-t border-slate-800">
           Gerenciado e desenvolvido pelo<br />
           <span className="font-semibold text-slate-400 mt-1 block">grupo 90 Creations</span>
         </div>
       </aside>
 
       {/* Mobile Header */}
-      <div className="md:hidden flex items-center justify-between p-4 bg-slate-900 text-white fixed top-0 w-full z-20">
+      <div className="md:hidden flex items-center justify-between p-4 bg-[#000000] text-white fixed top-0 w-full z-20">
         <div className="flex items-center gap-2 font-bold text-xl h-8">
           {settings.logotipo ? (
             <img src={settings.logotipo} alt={settings.nome_loja} className="max-h-full max-w-full object-contain" />
@@ -96,7 +96,7 @@ export const Layout: React.FC<LayoutProps> = ({ children, activeView, onNavigate
 
       {/* Mobile Menu Overlay */}
       {mobileMenuOpen && (
-        <div className="md:hidden fixed inset-0 z-10 bg-slate-900 text-white pt-20 px-4 flex flex-col h-full space-y-2">
+        <div className="md:hidden fixed inset-0 z-10 bg-[#000000] text-white pt-20 px-4 flex flex-col h-full space-y-2">
           {navItems.map(item => {
             const Icon = item.icon;
             return (
@@ -105,7 +105,7 @@ export const Layout: React.FC<LayoutProps> = ({ children, activeView, onNavigate
                 onClick={() => handleNav(item.id)}
                 className={`w-full flex items-center gap-3 px-4 py-4 rounded-lg text-lg ${
                   activeView === item.id 
-                    ? 'bg-purple-600 text-white' 
+                    ? 'bg-[#7B2CF5] text-white' 
                     : 'text-slate-300'
                 }`}
               >

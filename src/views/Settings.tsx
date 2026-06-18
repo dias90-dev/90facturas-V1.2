@@ -9,7 +9,7 @@ export const Settings: React.FC = () => {
   const handleSave = (e?: React.FormEvent) => {
     if (e) e.preventDefault();
     updateSettings(localSettings);
-    alert('Configurações salvas com sucesso!');
+    alert('Operação realizada com sucesso. Configurações guardadas.');
   };
 
   const currentDate = new Date().toLocaleDateString('pt-AO', {
@@ -43,8 +43,8 @@ export const Settings: React.FC = () => {
               ) : (
                 <div className="w-16 h-16 mb-4 relative">
                   <div className="absolute inset-0 bg-yellow-500 rounded-sm"></div>
-                  <div className="absolute inset-1 bg-white flex items-center justify-center flex-col">
-                     <div className="w-8 h-8 rounded-full bg-purple-500 absolute -top-2 -right-2"></div>
+                  <div className="absolute inset-1 bg-[#0A0A0A] flex items-center justify-center flex-col">
+                     <div className="w-8 h-8 rounded-full bg-[#7B2CF5] absolute -top-2 -right-2"></div>
                      <div className="w-full h-1/2 bg-green-500 absolute bottom-0 rounded-b-sm"></div>
                   </div>
                 </div>
@@ -52,7 +52,7 @@ export const Settings: React.FC = () => {
               <h3 className="text-slate-300 font-medium text-lg leading-snug">
                 Clique para<br/>carregar o<br/>logotipo
               </h3>
-              <p className="text-slate-500 text-sm mt-3">
+              <p className="text-[#B4B4B4] text-sm mt-3">
                 PNG, JPG ou<br/>SVG —<br/>recomendado<br/>200×80px
               </p>
             </div>
@@ -72,7 +72,7 @@ export const Settings: React.FC = () => {
           {/* Business Data Card */}
           <div className="bg-[#131B2F] rounded-2xl p-6 shadow-xl shadow-black/20 border border-slate-800/50">
             <div className="flex items-center gap-3 mb-6">
-              <div className="w-2.5 h-2.5 rounded-full bg-purple-500 shadow-[0_0_8px_rgba(168,85,247,0.6)]"></div>
+              <div className="w-2.5 h-2.5 rounded-full bg-[#7B2CF5] shadow-[0_0_8px_rgba(168,85,247,0.6)]"></div>
               <h3 className="text-xl font-bold text-white">Dados do<br/>Negócio</h3>
             </div>
 
@@ -83,7 +83,7 @@ export const Settings: React.FC = () => {
                   type="text" 
                   value={localSettings.nome_loja}
                   onChange={e => setLocalSettings({...localSettings, nome_loja: e.target.value})}
-                  className="w-full px-4 py-3 bg-[#0B1120] text-white rounded-xl border border-slate-800 focus:outline-none focus:border-purple-500/50 focus:ring-1 focus:ring-purple-500/50 transition-all placeholder:text-slate-600"
+                  className="w-full px-4 py-3 bg-[#0B1120] text-white rounded-xl border border-slate-800 focus:outline-none focus:border-purple-500/50 focus:ring-1 focus:ring-purple-500/50 transition-all placeholder:text-[#B4B4B4]"
                   placeholder="Nome da sua loja"
                 />
               </div>
@@ -94,7 +94,7 @@ export const Settings: React.FC = () => {
                   type="text" 
                   value={localSettings.nif}
                   onChange={e => setLocalSettings({...localSettings, nif: e.target.value})}
-                  className="w-full px-4 py-3 bg-[#0B1120] text-white rounded-xl border border-slate-800 focus:outline-none focus:border-purple-500/50 focus:ring-1 focus:ring-purple-500/50 transition-all placeholder:text-slate-600"
+                  className="w-full px-4 py-3 bg-[#0B1120] text-white rounded-xl border border-slate-800 focus:outline-none focus:border-purple-500/50 focus:ring-1 focus:ring-purple-500/50 transition-all placeholder:text-[#B4B4B4]"
                   placeholder="Número fiscal"
                 />
               </div>
@@ -105,7 +105,7 @@ export const Settings: React.FC = () => {
                   type="text" 
                   value={localSettings.telefone}
                   onChange={e => setLocalSettings({...localSettings, telefone: e.target.value})}
-                  className="w-full px-4 py-3 bg-[#0B1120] text-white rounded-xl border border-slate-800 focus:outline-none focus:border-purple-500/50 focus:ring-1 focus:ring-purple-500/50 transition-all placeholder:text-slate-600"
+                  className="w-full px-4 py-3 bg-[#0B1120] text-white rounded-xl border border-slate-800 focus:outline-none focus:border-purple-500/50 focus:ring-1 focus:ring-purple-500/50 transition-all placeholder:text-[#B4B4B4]"
                   placeholder="Seu telefone"
                 />
               </div>
@@ -116,7 +116,7 @@ export const Settings: React.FC = () => {
                   type="text" 
                   value={localSettings.vendedor}
                   onChange={e => setLocalSettings({...localSettings, vendedor: e.target.value})}
-                  className="w-full px-4 py-3 bg-[#0B1120] text-white rounded-xl border border-slate-800 focus:outline-none focus:border-purple-500/50 focus:ring-1 focus:ring-purple-500/50 transition-all placeholder:text-slate-600"
+                  className="w-full px-4 py-3 bg-[#0B1120] text-white rounded-xl border border-slate-800 focus:outline-none focus:border-purple-500/50 focus:ring-1 focus:ring-purple-500/50 transition-all placeholder:text-[#B4B4B4]"
                   placeholder="email@exemplo.com"
                 />
               </div>
@@ -127,8 +127,41 @@ export const Settings: React.FC = () => {
                   type="text" 
                   value={localSettings.endereco}
                   onChange={e => setLocalSettings({...localSettings, endereco: e.target.value})}
-                  className="w-full px-4 py-3 bg-[#0B1120] text-white rounded-xl border border-slate-800 focus:outline-none focus:border-purple-500/50 focus:ring-1 focus:ring-purple-500/50 transition-all placeholder:text-slate-600"
+                  className="w-full px-4 py-3 bg-[#0B1120] text-white rounded-xl border border-slate-800 focus:outline-none focus:border-purple-500/50 focus:ring-1 focus:ring-purple-500/50 transition-all placeholder:text-[#B4B4B4]"
                   placeholder="Endereço físico"
+                />
+              </div>
+
+              <div className="space-y-1.5">
+                <label className="text-xs font-bold text-[#B4B4B4] tracking-widest uppercase">E-mail</label>
+                <input 
+                  type="email" 
+                  value={localSettings.email || ''}
+                  onChange={e => setLocalSettings({...localSettings, email: e.target.value})}
+                  className="w-full px-4 py-3 bg-[#0A0A0A] text-white rounded-xl border border-[#27272A] focus:outline-none focus:border-[#7B2CF5] focus:ring-1 focus:ring-[#7B2CF5] transition-all placeholder:text-[#B4B4B4]"
+                  placeholder="Seu e-mail profissional"
+                />
+              </div>
+
+              <div className="space-y-1.5">
+                <label className="text-xs font-bold text-[#B4B4B4] tracking-widest uppercase">Senha de Acesso (Login)</label>
+                <input 
+                  type="password" 
+                  value={localSettings.senha_admin || ''}
+                  onChange={e => setLocalSettings({...localSettings, senha_admin: e.target.value})}
+                  className="w-full px-4 py-3 bg-[#0A0A0A] text-white rounded-xl border border-[#27272A] focus:outline-none focus:border-[#7B2CF5] focus:ring-1 focus:ring-[#7B2CF5] transition-all placeholder:text-[#B4B4B4]"
+                  placeholder="Nova senha (ex: 123456)"
+                />
+              </div>
+
+              <div className="space-y-1.5">
+                <label className="text-xs font-bold text-[#B4B4B4] tracking-widest uppercase">Alerta de Estoque Crítico</label>
+                <input 
+                  type="number" 
+                  value={localSettings.limite_estoque || 10}
+                  onChange={e => setLocalSettings({...localSettings, limite_estoque: Number(e.target.value)})}
+                  className="w-full px-4 py-3 bg-[#0A0A0A] text-white rounded-xl border border-[#27272A] focus:outline-none focus:border-[#7B2CF5] focus:ring-1 focus:ring-[#7B2CF5] transition-all placeholder:text-[#B4B4B4]"
+                  placeholder="Ex: 10"
                 />
               </div>
 
@@ -185,7 +218,7 @@ export const Settings: React.FC = () => {
           <div className="mt-8 flex justify-center lg:justify-end">
             <button 
                onClick={exportBackup}
-               className="text-slate-500 hover:text-purple-400 text-sm flex items-center gap-2 transition-colors"
+               className="text-[#B4B4B4] hover:text-purple-400 text-sm flex items-center gap-2 transition-colors"
             >
                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" x2="12" y1="15" y2="3"/></svg>
                Exportar Backup JSON

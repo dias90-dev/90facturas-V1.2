@@ -27,7 +27,10 @@ const defaultSettings: StoreSettings = {
   nif: '000000000',
   telefone: '999 999 999',
   endereco: 'Endereço da Loja',
-  logotipo: '/logo.png'
+  logotipo: '',
+  limite_estoque: 10,
+  email: 'contacto@empresax.com',
+  senha_admin: '123456'
 };
 
 // Fallback Mocks temporários caso o Supabase não esteja ligado
@@ -87,12 +90,13 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
 
   const stats = useMemo(() => {
     const totalRevenue = faturas.filter(i => i.estado === 'pago').reduce((acc, inv) => acc + inv.total, 0);
-    const lowStockItems = produtos.filter(p => p.quantidade <= 10).length; // Alerta abaixo de 10
+    const limit = settings?.limite_estoque || 10;
+    const lowEstoqueItems = produtos.filter(p => p.quantidade <= limit).length; // Alerta abaixo do limite
     return {
       totalRevenue,
       totalInvoices: faturas.length,
       totalClients: clientes.length,
-      lowStockItems,
+      lowEstoqueItems,
       revenueData: [ // Idealmente isto deveria ser dinâmico com base nos meses
         { month: 'Jan', revenue: 4000000, expenses: 2400000 },
         { month: 'Fev', revenue: 3000000, expenses: 1398000 },
@@ -102,7 +106,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         { month: 'Jun', revenue: totalRevenue, expenses: 3800000 },
       ]
     };
-  }, [faturas, produtos, clientes]);
+  }, [faturas, produtos, clientes, settings]);
 
   const addProduto = async (p: Partial<Produto>) => {
     if (supabase) {
@@ -182,7 +186,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       timestamp: new Date().toISOString()
     };
     
-    // Salvar no local storage do navegador como redundância
+    // Guardar no local storage do navegador como redundância
     localStorage.setItem('gestoke_backup_snapshot', JSON.stringify(dataObj));
 
     // Despachar download do JSON

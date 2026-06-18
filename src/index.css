@@ -8,12 +8,33 @@
 
 body {
   font-family: var(--font-sans);
-  background-color: #f8fafc;
+  background-color: #0A0A0A;
+  color: #FFFFFF;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
+/* Scrollbar customization */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+::-webkit-scrollbar-track {
+  background: #0A0A0A;
+}
+::-webkit-scrollbar-thumb {
+  background: #27272A;
+  border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #7B2CF5;
+}
+
 @media print {
+  body {
+    background-color: #FFFFFF !important;
+    color: #000000 !important;
+  }
   body * {
     visibility: hidden;
   }
@@ -27,6 +48,15 @@ body {
     width: 100%;
     margin: 0;
     padding: 0;
+    color: #000000 !important;
+  }
+  
+  .print-text-black {
+    color: #000000 !important;
+  }
+
+  .print\:hidden {
+    display: none !important;
   }
 
   /* Impressão Térmica 80mm */

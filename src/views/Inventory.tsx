@@ -1,13 +1,13 @@
 import React, { useRef, useState } from 'react';
 import { useApp } from '../context/AppContext';
-import { Package, Plus, Search, Edit2, Trash2, X, AlertTriangle, Download, Upload, ScanLine, QrCode, Mic, MicOff } from 'lucide-react';
+import { Package, Plus, Search, Edit2, Trash2, X, AlertTriangle, Download, Upload, ScanLine, QrCode, Mic, MicOff, Printer } from 'lucide-react';
 import { BarcodeScannerModal } from '../components/BarcodeScannerModal';
 import { ProductQRCodeModal } from '../components/ProductQRCodeModal';
 import { Produto } from '../types';
 import { useSpeechRecognition } from '../hooks/useSpeechRecognition';
 
 export const Inventory: React.FC = () => {
-  const { produtos, deleteProduto, addProduto } = useApp();
+  const { produtos, deleteProduto, addProduto, settings } = useApp();
   const [searchTerm, setSearchTerm] = useState('');
   const fileInputRef = useRef<HTMLInputElement>(null);
   
@@ -22,7 +22,7 @@ export const Inventory: React.FC = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isScannerOpen, setIsScannerOpen] = useState(false);
   const [qrProduct, setQrProduct] = useState<Produto | null>(null);
-  const [showLowStockOnly, setShowLowStockOnly] = useState(false);
+  const [showLowEstoqueOnly, setShowLowEstoqueOnly] = useState(false);
   const [newProduto, setNewProduto] = useState({
     nome: '',
     codigo: '',
@@ -32,14 +32,14 @@ export const Inventory: React.FC = () => {
     categoria: ''
   });
 
-  const lowStockThreshold = 10;
-  const lowStockCount = produtos.filter(p => p.quantidade <= lowStockThreshold).length;
+  const lowEstoqueThreshold = settings?.limite_estoque || 10;
+  const lowEstoqueCount = produtos.filter(p => p.quantidade <= lowEstoqueThreshold).length;
 
   const filtered = produtos.filter(p => {
     const matchesSearch = p.nome.toLowerCase().includes(searchTerm.toLowerCase()) || 
                           p.codigo.toLowerCase().includes(searchTerm.toLowerCase());
-    const matchesLowStock = showLowStockOnly ? p.quantidade <= lowStockThreshold : true;
-    return matchesSearch && matchesLowStock;
+    const matchesLowEstoque = showLowEstoqueOnly ? p.quantidade <= lowEstoqueThreshold : true;
+    return matchesSearch && matchesLowEstoque;
   });
 
   const formatKz = (value: number) => {
@@ -131,27 +131,33 @@ export const Inventory: React.FC = () => {
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
         <div>
           <h2 className="text-2xl font-bold tracking-tight">Inventário</h2>
-          <p className="text-slate-500">Gestão de stock e artigos</p>
+          <p className="text-[#B4B4B4]">Gestão de estoque e artigos</p>
         </div>
-        <div className="flex flex-wrap gap-2">
-          {lowStockCount > 0 && (
+        <div className="flex flex-wrap gap-2 print:hidden">
+          {lowEstoqueCount > 0 && (
             <button 
-              onClick={() => setShowLowStockOnly(!showLowStockOnly)}
-              className={`px-4 py-2 rounded-lg font-medium flex items-center gap-2 transition-colors ${showLowStockOnly ? 'bg-red-600 text-white shadow-md shadow-red-500/20' : 'bg-red-50 text-red-600 hover:bg-red-100 border border-red-200'}`}
+              onClick={() => setShowLowEstoqueOnly(!showLowEstoqueOnly)}
+              className={`px-4 py-2 rounded-lg font-medium flex items-center gap-2 transition-colors ${showLowEstoqueOnly ? 'bg-[#F59E0B] text-white shadow-md shadow-[#F59E0B]/20' : 'bg-[#F59E0B]/10 text-[#F59E0B] hover:bg-[#F59E0B]/20 border border-[#F59E0B]/30'}`}
             >
               <AlertTriangle className="w-5 h-5" /> 
-              {lowStockCount} Stock Baixo
+              {lowEstoqueCount} Estoque Baixo
             </button>
           )}
           <button 
+            onClick={() => window.print()}
+            className="bg-[#18181A] hover:bg-[#27272A] text-[#B4B4B4] px-4 py-2 rounded-lg font-medium flex items-center gap-2 transition-colors"
+          >
+            <Printer className="w-5 h-5" /> Imprimir
+          </button>
+          <button 
             onClick={exportCSV}
-            className="bg-slate-100 hover:bg-slate-200 text-slate-700 px-4 py-2 rounded-lg font-medium flex items-center gap-2 transition-colors"
+            className="bg-[#18181A] hover:bg-[#27272A] text-[#B4B4B4] px-4 py-2 rounded-lg font-medium flex items-center gap-2 transition-colors"
           >
             <Download className="w-5 h-5" /> Exportar CSV
           </button>
           <button 
             onClick={() => fileInputRef.current?.click()}
-            className="bg-slate-100 hover:bg-slate-200 text-slate-700 px-4 py-2 rounded-lg font-medium flex items-center gap-2 transition-colors"
+            className="bg-[#18181A] hover:bg-[#27272A] text-[#B4B4B4] px-4 py-2 rounded-lg font-medium flex items-center gap-2 transition-colors"
           >
             <Upload className="w-5 h-5" /> Importar CSV
           </button>
@@ -164,104 +170,104 @@ export const Inventory: React.FC = () => {
           />
           <button 
             onClick={() => setIsModalOpen(true)}
-            className="bg-purple-600 hover:bg-purple-700 text-white px-4 py-2 rounded-lg font-medium flex items-center gap-2 transition-colors"
+            className="bg-[#7B2CF5] hover:bg-purple-700 text-white px-4 py-2 rounded-lg font-medium flex items-center gap-2 transition-colors"
           >
             <Plus className="w-5 h-5" /> Adicionar Artigo
           </button>
         </div>
       </div>
 
-      <div className="bg-white rounded-xl shadow-sm border border-slate-100 overflow-hidden">
-        <div className="p-4 border-b border-slate-100">
-          <div className="flex gap-2">
-            <div className="relative max-w-sm flex-1">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 w-5 h-5" />
+      <div className="bg-[#18181A] rounded-xl shadow-sm border border-[#27272A] overflow-hidden flex flex-col print:border-none print:shadow-none print:bg-transparent">
+        <div className="p-4 border-b border-[#27272A] flex gap-4 print:hidden">
+          <div className="relative flex-1">
+            <Search className="w-5 h-5 absolute left-3 top-1/2 -translate-y-1/2 text-[#B4B4B4]" />
+            <div className="flex w-full relative">
               <input 
-                type="text"
-                placeholder={isListening ? "Ouvindo..." : "Pesquisar por nome ou Código..."}
-                className={`w-full pl-10 pr-10 py-2 rounded-lg border focus:outline-none focus:ring-2 focus:ring-purple-500/20 focus:border-purple-500 transition-colors ${isListening ? 'border-purple-400 bg-purple-50' : 'border-slate-200'}`}
+                type="text" 
+                placeholder="Pesquisar artigos por nome, código ou categoria..." 
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
+                className="w-full pl-10 pr-10 py-2 border border-[#27272A] bg-[#0A0A0A] text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-[#7B2CF5] focus:border-transparent transition-all"
               />
-              <button 
-                onClick={isListening ? stopListening : startListening}
-                className={`absolute right-3 top-1/2 -translate-y-1/2 transition-colors ${isListening ? 'text-purple-600' : 'text-slate-400 hover:text-purple-600'}`}
-                title="Pesquisar por Voz"
-              >
-                {isListening ? <Mic className="w-5 h-5 animate-pulse" /> : <MicOff className="w-5 h-5" />}
-              </button>
+              {searchTerm && (
+                <button 
+                  onClick={() => setSearchTerm('')}
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-[#B4B4B4] hover:text-white"
+                >
+                  <X className="w-4 h-4" />
+                </button>
+              )}
             </div>
-            <button 
-              onClick={() => setIsScannerOpen(true)}
-              className="px-3 py-2 bg-slate-100 hover:bg-slate-200 text-slate-600 rounded-lg flex items-center gap-2 transition-colors border border-slate-200"
-              title="Escanear Código de Barras"
-            >
-              <ScanLine className="w-5 h-5" />
-            </button>
           </div>
+          <button 
+            onClick={() => setIsScannerOpen(true)}
+            className="bg-[#27272A] hover:bg-[#3f3f46] text-white px-4 py-2 rounded-lg flex items-center gap-2 transition-colors"
+            title="Scan Barcode"
+          >
+            <ScanLine className="w-5 h-5" />
+          </button>
         </div>
-        
-        <div className="overflow-x-auto">
+
+        <div className="overflow-x-auto flex-1">
           <table className="w-full text-left text-sm whitespace-nowrap">
-            <thead className="bg-slate-50 text-slate-500">
+            <thead className="bg-[#0A0A0A] text-[#B4B4B4]">
               <tr>
                 <th className="px-6 py-4 font-medium">Artigo</th>
                 <th className="px-6 py-4 font-medium">Código</th>
+                <th className="px-6 py-4 font-medium">Categoria</th>
+                <th className="px-6 py-4 font-medium">Estoque</th>
                 <th className="px-6 py-4 font-medium">Preço Venda</th>
-                <th className="px-6 py-4 font-medium">Stock</th>
-                <th className="px-6 py-4 font-medium">Estado</th>
-                <th className="px-6 py-4 font-medium text-right">Ações</th>
+                <th className="px-6 py-4 font-medium">Preço Custo</th>
+                <th className="px-6 py-4 font-medium text-right print:hidden">Ações</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-slate-100">
+            <tbody className="divide-y divide-[#27272A]">
               {filtered.map(product => {
-                const isLow = product.quantidade <= 10;
+                const isLow = product.quantidade <= lowStockThreshold;
                 return (
-                  <tr key={product.id} className={`transition-colors ${isLow ? 'bg-red-50/50 hover:bg-red-50' : 'hover:bg-slate-50'}`}>
+                  <tr key={product.id} className={`transition-colors text-[#FFFFFF] ${isLow ? 'bg-[#F59E0B]/5 hover:bg-[#F59E0B]/10' : 'hover:bg-[#27272A]/50'}`}>
                     <td className="px-6 py-4">
                       <div className="flex items-center gap-3">
-                        <div className="p-2 bg-indigo-50 text-indigo-600 rounded-md">
-                          <Package className="w-5 h-5" />
+                        <div className="w-10 h-10 rounded-lg bg-[#27272A] flex items-center justify-center shrink-0">
+                          <Package className="w-5 h-5 text-[#B4B4B4]" />
                         </div>
-                        <span className="font-medium text-slate-900">{product.nome}</span>
+                        <span className="font-medium text-[15px]">{product.nome}</span>
                       </div>
                     </td>
-                    <td className="px-6 py-4 text-slate-500">{product.codigo}</td>
-                    <td className="px-6 py-4 font-medium">{formatKz(product.preco_venda)}</td>
+                    <td className="px-6 py-4 text-[#B4B4B4]">{product.codigo}</td>
                     <td className="px-6 py-4">
-                      <div className="flex items-center gap-2">
-                        <span className={`font-bold ${isLow ? 'text-red-700' : 'text-slate-900'}`}>
-                          {product.quantidade}
-                        </span>
-                        {isLow && <AlertTriangle className="w-4 h-4 text-red-500" />}
-                      </div>
+                      <span className="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-[#27272A] text-[#B4B4B4]">
+                        {product.categoria || 'Geral'}
+                      </span>
                     </td>
                     <td className="px-6 py-4">
                       {isLow ? (
-                        <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-800">
-                          Stock Baixo
+                        <span className="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-[#F59E0B]/20 text-[#F59E0B] gap-1">
+                          <AlertTriangle className="w-3 h-3" />
+                          Estoque Baixo ({product.quantidade})
                         </span>
                       ) : (
-                        <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-emerald-100 text-emerald-800">
-                          Adequado
-                        </span>
+                        <span className="font-medium">{product.quantidade} un</span>
                       )}
                     </td>
-                    <td className="px-6 py-4 text-right">
-                      <div className="flex justify-end gap-2">
+                    <td className="px-6 py-4 font-medium text-[#10B981]">{formatKz(product.preco_venda)}</td>
+                    <td className="px-6 py-4 text-[#B4B4B4]">{formatKz(product.preco_custo)}</td>
+                    <td className="px-6 py-4 text-right print:hidden">
+                      <div className="flex items-center justify-end gap-2">
                         <button 
                           onClick={() => setQrProduct(product)}
-                          className="p-1.5 text-slate-400 hover:text-purple-600 rounded-md hover:bg-slate-100 transition-colors"
-                          title="Ver Código QR"
+                          className="p-2 text-[#B4B4B4] hover:text-white hover:bg-[#27272A] rounded-lg transition-colors"
+                          title="Gerar QR Code"
                         >
                           <QrCode className="w-4 h-4" />
                         </button>
-                        <button className="p-1.5 text-slate-400 hover:text-purple-600 rounded-md hover:bg-slate-100 transition-colors">
+                        <button className="p-2 text-[#B4B4B4] hover:text-[#7B2CF5] hover:bg-[#7B2CF5]/10 rounded-lg transition-colors">
                           <Edit2 className="w-4 h-4" />
                         </button>
                         <button 
                           onClick={() => deleteProduto(product.id)}
-                          className="p-1.5 text-slate-400 hover:text-red-600 rounded-md hover:bg-slate-100 transition-colors"
+                          className="p-2 text-[#B4B4B4] hover:text-[#EF4444] hover:bg-red-500/10 rounded-lg transition-colors"
+                          title="Excluir"
                         >
                           <Trash2 className="w-4 h-4" />
                         </button>
@@ -272,8 +278,12 @@ export const Inventory: React.FC = () => {
               })}
               {filtered.length === 0 && (
                 <tr>
-                  <td colSpan={6} className="px-6 py-12 text-center text-slate-500">
-                    Nenhum artigo encontrado.
+                  <td colSpan={7} className="px-6 py-12 text-center text-[#B4B4B4]">
+                    <div className="flex flex-col items-center justify-center">
+                      <Package className="w-12 h-12 mb-4 opacity-20 text-white" />
+                      <p className="text-lg font-medium text-white mb-1">Nenhum artigo encontrado</p>
+                      <p className="text-sm">Tente ajustar a pesquisa ou adicionar um novo.</p>
+                    </div>
                   </td>
                 </tr>
               )}
@@ -282,97 +292,96 @@ export const Inventory: React.FC = () => {
         </div>
       </div>
 
-      {/* Modal Adicionar Produto */}
       {isModalOpen && (
         <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4 z-50">
-          <div className="bg-white rounded-2xl w-full max-w-lg overflow-hidden shadow-2xl">
-            <div className="p-6 border-b border-slate-100 flex justify-between items-center bg-slate-50">
-              <h3 className="text-xl font-bold text-slate-900">Novo Artigo</h3>
+          <div className="bg-[#0A0A0A] rounded-2xl w-full max-w-md shadow-2xl overflow-hidden border border-[#27272A]">
+            <div className="p-6 border-b border-[#27272A] flex justify-between items-center bg-[#18181A]">
+              <h3 className="text-xl font-bold text-white">Adicionar Artigo</h3>
               <button 
                 onClick={() => setIsModalOpen(false)}
-                className="text-slate-400 hover:text-slate-600 transition-colors"
+                className="text-[#B4B4B4] hover:text-white transition-colors"
               >
                 <X className="w-5 h-5" />
               </button>
             </div>
             <form onSubmit={handleAddProduto} className="p-6 space-y-4">
+              <div>
+                <label className="block text-sm font-medium text-[#B4B4B4] mb-1">Nome do Produto</label>
+                <input 
+                  type="text" 
+                  required
+                  value={newProduto.nome}
+                  onChange={(e) => setNewProduto({...newProduto, nome: e.target.value})}
+                  className="w-full px-3 py-2 bg-[#18181A] border border-[#27272A] text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-[#7B2CF5]"
+                />
+              </div>
               <div className="grid grid-cols-2 gap-4">
-                <div className="space-y-1.5 col-span-2">
-                  <label className="text-sm font-medium text-slate-700">Nome do Artigo *</label>
+                <div>
+                  <label className="block text-sm font-medium text-[#B4B4B4] mb-1">Código</label>
                   <input 
-                    required
                     type="text" 
-                    value={newProduto.nome}
-                    onChange={e => setNewProduto({...newProduto, nome: e.target.value})}
-                    className="w-full px-3 py-2 rounded-lg border border-slate-200 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500"
-                    placeholder="ex: Monitor 27'' IPS"
-                  />
-                </div>
-                <div className="space-y-1.5">
-                  <label className="text-sm font-medium text-slate-700">Código/SKU *</label>
-                  <input 
                     required
-                    type="text" 
                     value={newProduto.codigo}
-                    onChange={e => setNewProduto({...newProduto, codigo: e.target.value})}
-                    className="w-full px-3 py-2 rounded-lg border border-slate-200 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500"
-                    placeholder="ex: MON-27-IPS"
+                    onChange={(e) => setNewProduto({...newProduto, codigo: e.target.value})}
+                    className="w-full px-3 py-2 bg-[#18181A] border border-[#27272A] text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-[#7B2CF5]"
                   />
                 </div>
-                <div className="space-y-1.5">
-                  <label className="text-sm font-medium text-slate-700">Categoria</label>
+                <div>
+                  <label className="block text-sm font-medium text-[#B4B4B4] mb-1">Categoria</label>
                   <input 
                     type="text" 
+                    required
                     value={newProduto.categoria}
-                    onChange={e => setNewProduto({...newProduto, categoria: e.target.value})}
-                    className="w-full px-3 py-2 rounded-lg border border-slate-200 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500"
-                    placeholder="ex: Eletrónicos"
-                  />
-                </div>
-                <div className="space-y-1.5">
-                  <label className="text-sm font-medium text-slate-700">Preço de Custo (AOA) *</label>
-                  <input 
-                    required
-                    type="number" 
-                    value={newProduto.preco_custo || ''}
-                    onChange={e => setNewProduto({...newProduto, preco_custo: Number(e.target.value)})}
-                    className="w-full px-3 py-2 rounded-lg border border-slate-200 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500"
-                  />
-                </div>
-                <div className="space-y-1.5">
-                  <label className="text-sm font-medium text-slate-700">Preço de Venda (AOA) *</label>
-                  <input 
-                    required
-                    type="number" 
-                    value={newProduto.preco_venda || ''}
-                    onChange={e => setNewProduto({...newProduto, preco_venda: Number(e.target.value)})}
-                    className="w-full px-3 py-2 rounded-lg border border-slate-200 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500"
-                  />
-                </div>
-                <div className="space-y-1.5 col-span-2">
-                  <label className="text-sm font-medium text-slate-700">Quantidade Inicial *</label>
-                  <input 
-                    required
-                    type="number" 
-                    value={newProduto.quantidade || ''}
-                    onChange={e => setNewProduto({...newProduto, quantidade: Number(e.target.value)})}
-                    className="w-full px-3 py-2 rounded-lg border border-slate-200 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500"
+                    onChange={(e) => setNewProduto({...newProduto, categoria: e.target.value})}
+                    className="w-full px-3 py-2 bg-[#18181A] border border-[#27272A] text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-[#7B2CF5]"
                   />
                 </div>
               </div>
-              <div className="flex justify-end gap-3 pt-6 border-t border-slate-100 mt-6">
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-sm font-medium text-[#B4B4B4] mb-1">Preço Compra</label>
+                  <input 
+                    type="number" 
+                    required min="0" step="0.01"
+                    value={newProduto.preco_custo || ''}
+                    onChange={(e) => setNewProduto({...newProduto, preco_custo: Number(e.target.value)})}
+                    className="w-full px-3 py-2 bg-[#18181A] border border-[#27272A] text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-[#7B2CF5]"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-[#B4B4B4] mb-1">Preço Venda</label>
+                  <input 
+                    type="number" 
+                    required min="0" step="0.01"
+                    value={newProduto.preco_venda || ''}
+                    onChange={(e) => setNewProduto({...newProduto, preco_venda: Number(e.target.value)})}
+                    className="w-full px-3 py-2 bg-[#18181A] border border-[#27272A] text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-[#7B2CF5]"
+                  />
+                </div>
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-[#B4B4B4] mb-1">Quantidade Inicial</label>
+                <input 
+                  type="number" 
+                  required min="0"
+                  value={newProduto.quantidade || ''}
+                  onChange={(e) => setNewProduto({...newProduto, quantidade: Number(e.target.value)})}
+                  className="w-full px-3 py-2 bg-[#18181A] border border-[#27272A] text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-[#7B2CF5]"
+                />
+              </div>
+              <div className="flex justify-end pt-4 gap-3">
                 <button 
                   type="button"
                   onClick={() => setIsModalOpen(false)}
-                  className="px-4 py-2 font-medium text-slate-600 hover:text-slate-900 transition-colors"
+                  className="px-4 py-2 text-[#EF4444] hover:bg-red-500/10 rounded-lg font-medium transition-colors border border-transparent"
                 >
                   Cancelar
                 </button>
                 <button 
                   type="submit"
-                  className="bg-indigo-600 hover:bg-indigo-700 text-white px-6 py-2 rounded-lg font-medium transition-colors shadow-sm"
+                  className="px-6 py-2 bg-[#10B981] hover:bg-emerald-600 text-white rounded-lg font-medium flex items-center gap-2 transition-colors"
                 >
-                  Guardar Artigo
+                  <Save className="w-5 h-5" /> Guardar
                 </button>
               </div>
             </form>

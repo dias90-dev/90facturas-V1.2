@@ -15,26 +15,26 @@ export const Reports: React.FC = () => {
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
         <div>
           <h2 className="text-2xl font-bold tracking-tight">Relatórios Detalhados</h2>
-          <p className="text-slate-500">Acompanhamento preciso das transações financeiras</p>
+          <p className="text-[#B4B4B4]">Acompanhamento preciso das transações financeiras</p>
         </div>
         <div className="flex gap-2">
           <button onClick={exportBackup} className="bg-indigo-50 hover:bg-indigo-100 text-indigo-700 px-4 py-2 rounded-lg font-medium flex items-center gap-2 transition-colors">
             <Download className="w-5 h-5" /> JSON
           </button>
-          <button className="bg-slate-900 hover:bg-slate-800 text-white px-4 py-2 rounded-lg font-medium flex items-center gap-2 transition-colors">
+          <button className="bg-[#000000] hover:bg-slate-800 text-white px-4 py-2 rounded-lg font-medium flex items-center gap-2 transition-colors">
             <Download className="w-5 h-5" /> Exportar PDF
           </button>
         </div>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <div className="bg-white p-6 rounded-xl shadow-sm border border-slate-100 flex flex-col">
+        <div className="bg-[#0A0A0A] p-6 rounded-xl shadow-sm border border-[#27272A] flex flex-col">
           <div className="flex items-center justify-between mb-6">
             <h3 className="font-bold flex items-center gap-2">
               <TrendingUp className="w-5 h-5 text-indigo-500" />
               Receitas vs Despesas
             </h3>
-            <span className="text-xs font-medium bg-slate-100 px-2 py-1 rounded text-slate-600">Este Ano</span>
+            <span className="text-xs font-medium bg-[#18181A] px-2 py-1 rounded text-[#B4B4B4]">Este Ano</span>
           </div>
           <div className="h-80 w-full">
             <ResponsiveContainer width="100%" height="100%">
@@ -55,7 +55,7 @@ export const Reports: React.FC = () => {
           </div>
         </div>
 
-        <div className="bg-white p-6 rounded-xl shadow-sm border border-slate-100 flex flex-col">
+        <div className="bg-[#0A0A0A] p-6 rounded-xl shadow-sm border border-[#27272A] flex flex-col">
           <div className="flex items-center justify-between mb-6">
             <h3 className="font-bold flex items-center gap-2">
               <PieChart className="w-5 h-5 text-emerald-500" />

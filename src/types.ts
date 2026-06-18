@@ -58,12 +58,15 @@ export type StoreSettings = {
   telefone: string;
   endereco: string;
   logotipo: string;
+  limite_estoque: number;
+  email?: string;
+  senha_admin?: string;
 };
 
 export type DashboardStats = {
   totalRevenue: number;
   totalInvoices: number;
   totalClients: number;
-  lowStockItems: number;
+  lowEstoqueItems: number;
   revenueData: { month: string; revenue: number; expenses: number }[];
 };

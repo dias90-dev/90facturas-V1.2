@@ -11,10 +11,10 @@ import {
   AreaChart, 
   Area 
 } from 'recharts';
-import { TrendingUp, Package, Users, DollarSign, AlertTriangle } from 'lucide-react';
+import { TrendingUp, Package, Users, DollarSign, AlertTriangle, Printer } from 'lucide-react';
 
 export const Dashboard: React.FC = () => {
-  const { stats, faturas, produtos } = useApp();
+  const { stats, faturas, produtos, settings } = useApp();
 
   const formatKz = (value: number) => {
     return new Intl.NumberFormat('pt-AO', { style: 'currency', currency: 'AOA' }).format(value);
@@ -48,19 +48,27 @@ export const Dashboard: React.FC = () => {
 
   return (
     <div className="space-y-6">
-      <div>
-        <h2 className="text-2xl font-bold tracking-tight">Dashboard Overview</h2>
-        <p className="text-slate-500">Acompanhamento de facturação e stock</p>
+      <div className="flex justify-between items-center print:hidden">
+        <div>
+          <h2 className="text-2xl font-bold tracking-tight">Dashboard Overview</h2>
+          <p className="text-[#B4B4B4]">Acompanhamento de faturação e estoque</p>
+        </div>
+        <button 
+          onClick={() => window.print()}
+          className="bg-[#0A0A0A] border border-[#27272A] hover:bg-[#0A0A0A] text-[#B4B4B4] px-4 py-2 rounded-lg font-medium flex items-center gap-2 transition-colors"
+        >
+          <Printer className="w-5 h-5" /> Imprimir
+        </button>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-        <div className="bg-white rounded-xl shadow-sm border border-slate-100 p-6 flex flex-col">
+        <div className="bg-[#0A0A0A] rounded-xl shadow-sm border border-[#27272A] p-6 flex flex-col">
           <div className="flex justify-between items-start">
             <div>
-              <p className="text-sm font-medium text-slate-500">Receita Total</p>
+              <p className="text-sm font-medium text-[#B4B4B4]">Receita Total</p>
               <h3 className="text-2xl font-bold tracking-tight mt-1">{formatKz(stats.totalRevenue)}</h3>
             </div>
-            <div className="bg-indigo-50 p-3 rounded-lg text-indigo-600">
+            <div className="bg-indigo-50 p-3 rounded-lg text-[#7B2CF5]">
               <DollarSign className="w-5 h-5" />
             </div>
           </div>
@@ -69,22 +77,22 @@ export const Dashboard: React.FC = () => {
           </p>
         </div>
 
-        <div className="bg-white rounded-xl shadow-sm border border-slate-100 p-6 flex flex-col">
+        <div className="bg-[#0A0A0A] rounded-xl shadow-sm border border-[#27272A] p-6 flex flex-col">
           <div className="flex justify-between items-start">
             <div>
-              <p className="text-sm font-medium text-slate-500">Faturas Emitidas</p>
+              <p className="text-sm font-medium text-[#B4B4B4]">Faturas Emitidas</p>
               <h3 className="text-2xl font-bold tracking-tight mt-1">{stats.totalInvoices}</h3>
             </div>
-            <div className="bg-blue-50 p-3 rounded-lg text-blue-600">
+            <div className="bg-blue-50 p-3 rounded-lg text-[#7B2CF5]">
               <TrendingUp className="w-5 h-5" />
             </div>
           </div>
         </div>
 
-        <div className="bg-white rounded-xl shadow-sm border border-slate-100 p-6 flex flex-col">
+        <div className="bg-[#0A0A0A] rounded-xl shadow-sm border border-[#27272A] p-6 flex flex-col">
           <div className="flex justify-between items-start">
             <div>
-              <p className="text-sm font-medium text-slate-500">Total Clientes</p>
+              <p className="text-sm font-medium text-[#B4B4B4]">Total Clientes</p>
               <h3 className="text-2xl font-bold tracking-tight mt-1">{stats.totalClients}</h3>
             </div>
             <div className="bg-emerald-50 p-3 rounded-lg text-emerald-600">
@@ -93,13 +101,13 @@ export const Dashboard: React.FC = () => {
           </div>
         </div>
 
-        <div className="bg-white rounded-xl shadow-sm border border-slate-100 p-6 flex flex-col">
+        <div className="bg-[#0A0A0A] rounded-xl shadow-sm border border-[#27272A] p-6 flex flex-col">
           <div className="flex justify-between items-start">
             <div>
-              <p className="text-sm font-medium text-slate-500">Artigos Pouco Stock</p>
-              <h3 className="text-2xl font-bold tracking-tight mt-1 text-rose-600">{stats.lowStockItems}</h3>
+              <p className="text-sm font-medium text-[#B4B4B4]">Artigos Pouco Estoque</p>
+              <h3 className="text-2xl font-bold tracking-tight mt-1 text-[#F59E0B]">{stats.lowEstoqueItems}</h3>
             </div>
-            <div className="bg-rose-50 p-3 rounded-lg text-rose-600">
+            <div className="bg-rose-50 p-3 rounded-lg text-[#F59E0B]">
               <Package className="w-5 h-5" />
             </div>
           </div>
@@ -107,7 +115,7 @@ export const Dashboard: React.FC = () => {
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        <div className="lg:col-span-2 bg-white p-6 rounded-xl shadow-sm border border-slate-100">
+        <div className="lg:col-span-2 bg-[#0A0A0A] p-6 rounded-xl shadow-sm border border-[#27272A]">
           <h3 className="font-bold mb-6">Receitas vs Despesas Anual</h3>
           <div className="h-72">
             <ResponsiveContainer width="100%" height="100%">
@@ -131,20 +139,20 @@ export const Dashboard: React.FC = () => {
           </div>
         </div>
 
-        <div className="bg-white p-6 rounded-xl shadow-sm border border-slate-100 flex flex-col">
-          <h3 className="font-bold mb-4">Stock Crítico</h3>
+        <div className="bg-[#0A0A0A] p-6 rounded-xl shadow-sm border border-[#27272A] flex flex-col print:border-none print:shadow-none print:p-0">
+          <h3 className="font-bold mb-4">Estoque Crítico</h3>
           <div className="flex-1 overflow-y-auto">
-            {produtos.filter(p => p.quantidade <= 10).length === 0 ? (
+            {produtos.filter(p => p.quantidade <= (settings.limite_estoque || 10)).length === 0 ? (
               <div className="flex flex-col items-center justify-center h-full text-slate-400 gap-2">
                 <Package className="w-8 h-8 opacity-50" />
-                <p className="text-sm">Stock regularizado.</p>
+                <p className="text-sm">Estoque regularizado.</p>
               </div>
             ) : (
               <ul className="space-y-4">
-                {produtos.filter(p => p.quantidade <= 10).map(item => (
-                  <li key={item.id} className="flex items-center justify-between p-3 bg-red-50 text-red-900 rounded-lg">
+                {produtos.filter(p => p.quantidade <= (settings.limite_estoque || 10)).map(item => (
+                  <li key={item.id} className="flex items-center justify-between p-3 bg-[#F59E0B]/10 text-[#F59E0B] rounded-lg">
                     <div className="flex items-center gap-3">
-                      <AlertTriangle className="w-5 h-5 text-red-600" />
+                      <AlertTriangle className="w-5 h-5 text-[#F59E0B]" />
                       <div>
                         <p className="font-medium text-sm">{item.nome}</p>
                         <p className="text-xs text-red-700 opacity-80">Cód: {item.codigo}</p>
@@ -163,7 +171,7 @@ export const Dashboard: React.FC = () => {
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <div className="bg-white p-6 rounded-xl shadow-sm border border-slate-100">
+        <div className="bg-[#0A0A0A] p-6 rounded-xl shadow-sm border border-[#27272A]">
           <h3 className="font-bold mb-6">Top 5 Artigos Mais Vendidos</h3>
           <div className="h-72">
             <ResponsiveContainer width="100%" height="100%">
@@ -182,14 +190,14 @@ export const Dashboard: React.FC = () => {
           </div>
         </div>
 
-        <div className="bg-white p-6 rounded-xl shadow-sm border border-slate-100 flex flex-col">
+        <div className="bg-[#0A0A0A] p-6 rounded-xl shadow-sm border border-[#27272A] flex flex-col">
           <div className="flex justify-between items-center mb-6">
             <h3 className="font-bold">Faturas Recentes</h3>
           </div>
           <div className="overflow-x-auto flex-1">
             <table className="w-full text-left text-sm">
             <thead>
-              <tr className="text-slate-500 border-b border-slate-100">
+              <tr className="text-[#B4B4B4] border-b border-[#27272A]">
                 <th className="pb-3 font-medium">Nº Fatura</th>
                 <th className="pb-3 font-medium">Data</th>
                 <th className="pb-3 font-medium">Estado</th>
@@ -199,23 +207,23 @@ export const Dashboard: React.FC = () => {
             <tbody>
               {faturas.slice(0, 5).map(inv => (
                 <tr key={inv.id} className="border-b border-slate-50 last:border-0">
-                  <td className="py-4 font-medium text-indigo-600">{inv.numero_fatura}</td>
-                  <td className="py-4 text-slate-600">{new Date(inv.data).toLocaleDateString('pt-AO')}</td>
+                  <td className="py-4 font-medium text-[#7B2CF5]">{inv.numero_fatura}</td>
+                  <td className="py-4 text-[#B4B4B4]">{new Date(inv.data).toLocaleDateString('pt-AO')}</td>
                   <td className="py-4">
                     <span className={`px-2.5 py-1 rounded-full text-xs font-medium capitalize ${
                       inv.estado === 'pago' ? 'bg-emerald-100 text-emerald-700' :
                       inv.estado === 'pendente' ? 'bg-amber-100 text-amber-700' :
-                      'bg-slate-100 text-slate-700'
+                      'bg-[#18181A] text-[#B4B4B4]'
                     }`}>
                       {inv.estado === 'pago' ? 'Pago' : inv.estado === 'pendente' ? 'Pendente' : inv.estado}
                     </span>
                   </td>
-                  <td className="py-4 text-right font-bold text-slate-900">{formatKz(inv.total)}</td>
+                  <td className="py-4 text-right font-bold text-[#FFFFFF]">{formatKz(inv.total)}</td>
                 </tr>
               ))}
               {faturas.length === 0 && (
                 <tr>
-                  <td colSpan={4} className="py-8 text-center text-slate-500">Nenhuma fatura recente.</td>
+                  <td colSpan={4} className="py-8 text-center text-[#B4B4B4]">Nenhuma fatura recente.</td>
                 </tr>
               )}
             </tbody>
