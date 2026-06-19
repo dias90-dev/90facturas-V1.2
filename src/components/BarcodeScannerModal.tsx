@@ -52,7 +52,7 @@ export const BarcodeScannerModal: React.FC<BarcodeScannerModalProps> = ({ onScan
           <h3 className="text-xl font-bold text-[#FFFFFF]">Escanear Código</h3>
           <button 
             onClick={onClose}
-            className="p-1.5 text-slate-400 hover:text-[#B4B4B4] transition-colors bg-[#0A0A0A] rounded-md border border-[#27272A]"
+            className="p-1.5 text-[#B4B4B4] hover:text-[#B4B4B4] transition-colors bg-[#0A0A0A] rounded-md border border-[#27272A]"
           >
             <X className="w-5 h-5" />
           </button>
@@ -60,7 +60,7 @@ export const BarcodeScannerModal: React.FC<BarcodeScannerModalProps> = ({ onScan
         <div className="p-4 bg-[#000000] text-white flex flex-col items-center">
           <div id="reader" className="w-full max-w-sm rounded overflow-hidden"></div>
           {error && <p className="text-red-400 text-sm mt-4 text-center">{error}</p>}
-          <p className="text-sm mt-4 text-slate-400 text-center">
+          <p className="text-sm mt-4 text-[#B4B4B4] text-center">
             Aponte a câmera para o código de barras ou QR code do produto.
           </p>
         </div>

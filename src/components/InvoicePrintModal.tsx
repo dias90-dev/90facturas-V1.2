@@ -44,13 +44,13 @@ export const InvoicePrintModal: React.FC<InvoicePrintModalProps> = ({
           <div className="flex items-center gap-2">
             <button 
               onClick={() => handlePrint('a4')}
-              className="bg-[#7B2CF5] hover:bg-purple-700 text-white px-3 py-1.5 rounded-md font-medium text-sm flex items-center gap-2 transition-colors"
+              className="bg-[#7B2CF5] hover:bg-[#7B2CF5]/90 text-white px-3 py-1.5 rounded-md font-medium text-sm flex items-center gap-2 transition-colors"
             >
               <Printer className="w-4 h-4" /> A4
             </button>
             <button 
               onClick={() => handlePrint('thermal')}
-              className="bg-slate-800 hover:bg-[#000000] text-white px-3 py-1.5 rounded-md font-medium text-sm flex items-center gap-2 transition-colors"
+              className="bg-[#27272A] hover:bg-[#000000] text-white px-3 py-1.5 rounded-md font-medium text-sm flex items-center gap-2 transition-colors"
             >
               <Printer className="w-4 h-4" /> Cupão Térmico
             </button>
@@ -62,7 +62,7 @@ export const InvoicePrintModal: React.FC<InvoicePrintModalProps> = ({
             </button>
             <button 
               onClick={onClose}
-              className="ml-2 p-1.5 text-slate-400 hover:text-[#B4B4B4] transition-colors bg-[#0A0A0A] rounded-md border border-[#27272A]"
+              className="ml-2 p-1.5 text-[#B4B4B4] hover:text-[#B4B4B4] transition-colors bg-[#0A0A0A] rounded-md border border-[#27272A]"
             >
               <X className="w-5 h-5" />
             </button>

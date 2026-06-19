@@ -107,7 +107,7 @@ export const Dashboard: React.FC = () => {
               <p className="text-sm font-medium text-[#B4B4B4]">Artigos Pouco Estoque</p>
               <h3 className="text-2xl font-bold tracking-tight mt-1 text-[#F59E0B]">{stats.lowEstoqueItems}</h3>
             </div>
-            <div className="bg-rose-50 p-3 rounded-lg text-[#F59E0B]">
+            <div className="bg-[#F59E0B]/10 p-3 rounded-lg text-[#F59E0B]">
               <Package className="w-5 h-5" />
             </div>
           </div>
@@ -143,7 +143,7 @@ export const Dashboard: React.FC = () => {
           <h3 className="font-bold mb-4">Estoque Crítico</h3>
           <div className="flex-1 overflow-y-auto">
             {produtos.filter(p => p.quantidade <= (settings.limite_estoque || 10)).length === 0 ? (
-              <div className="flex flex-col items-center justify-center h-full text-slate-400 gap-2">
+              <div className="flex flex-col items-center justify-center h-full text-[#B4B4B4] gap-2">
                 <Package className="w-8 h-8 opacity-50" />
                 <p className="text-sm">Estoque regularizado.</p>
               </div>
@@ -206,7 +206,7 @@ export const Dashboard: React.FC = () => {
             </thead>
             <tbody>
               {faturas.slice(0, 5).map(inv => (
-                <tr key={inv.id} className="border-b border-slate-50 last:border-0">
+                <tr key={inv.id} className="border-b border-[#27272A] last:border-0">
                   <td className="py-4 font-medium text-[#7B2CF5]">{inv.numero_fatura}</td>
                   <td className="py-4 text-[#B4B4B4]">{new Date(inv.data).toLocaleDateString('pt-AO')}</td>
                   <td className="py-4">

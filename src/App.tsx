@@ -102,7 +102,7 @@ function Login({ onLogin }: { onLogin: () => void }) {
             <div>
               <button
                 type="submit"
-                className="w-full flex justify-center py-3 px-4 border border-transparent rounded-lg shadow-sm text-sm font-medium text-white bg-[#7B2CF5] hover:bg-purple-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#7B2CF5] transition-colors"
+                className="w-full flex justify-center py-3 px-4 border border-transparent rounded-lg shadow-sm text-sm font-medium text-white bg-[#7B2CF5] hover:bg-[#7B2CF5]/90 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#7B2CF5] transition-colors"
               >
                 Acessar Sistema
               </button>

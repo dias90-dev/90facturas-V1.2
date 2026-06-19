@@ -21,7 +21,7 @@ export const Reports: React.FC = () => {
           <button onClick={exportBackup} className="bg-indigo-50 hover:bg-indigo-100 text-indigo-700 px-4 py-2 rounded-lg font-medium flex items-center gap-2 transition-colors">
             <Download className="w-5 h-5" /> JSON
           </button>
-          <button className="bg-[#000000] hover:bg-slate-800 text-white px-4 py-2 rounded-lg font-medium flex items-center gap-2 transition-colors">
+          <button className="bg-[#000000] hover:bg-[#27272A] text-white px-4 py-2 rounded-lg font-medium flex items-center gap-2 transition-colors">
             <Download className="w-5 h-5" /> Exportar PDF
           </button>
         </div>

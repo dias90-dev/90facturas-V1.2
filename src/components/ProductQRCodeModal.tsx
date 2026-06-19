@@ -32,7 +32,7 @@ export const ProductQRCodeModal: React.FC<ProductQRCodeModalProps> = ({ produto,
             </button>
             <button 
               onClick={onClose}
-              className="p-1.5 text-slate-400 hover:text-[#B4B4B4] transition-colors bg-[#0A0A0A] rounded-md border border-[#27272A]"
+              className="p-1.5 text-[#B4B4B4] hover:text-[#B4B4B4] transition-colors bg-[#0A0A0A] rounded-md border border-[#27272A]"
             >
               <X className="w-5 h-5" />
             </button>
@@ -44,7 +44,7 @@ export const ProductQRCodeModal: React.FC<ProductQRCodeModalProps> = ({ produto,
           </div>
           
           <div className="text-center space-y-2 w-full">
-            <p className="text-xs font-bold text-slate-400 uppercase tracking-wider">Código</p>
+            <p className="text-xs font-bold text-[#B4B4B4] uppercase tracking-wider">Código</p>
             <p className="text-xl font-mono bg-[#18181A] py-2 rounded-lg text-[#FFFFFF] tracking-widest">{produto.codigo}</p>
             
             <h2 className="text-2xl font-bold mt-4 mb-1">{produto.nome}</h2>

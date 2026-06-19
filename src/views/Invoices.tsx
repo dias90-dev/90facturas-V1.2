@@ -112,7 +112,7 @@ export const Invoices: React.FC = () => {
       <div className="bg-[#0A0A0A] rounded-xl shadow-sm border border-[#27272A] overflow-hidden">
         <div className="p-4 border-b border-[#27272A]">
           <div className="relative max-w-sm flex">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 w-5 h-5" />
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-[#B4B4B4] w-5 h-5" />
             <input 
               type="text"
               placeholder={isListening ? "Ouvindo..." : "Pesquisar fatura ou cliente..."}
@@ -122,7 +122,7 @@ export const Invoices: React.FC = () => {
             />
             <button 
               onClick={isListening ? stopListening : startListening}
-              className={`absolute right-3 top-1/2 -translate-y-1/2 transition-colors ${isListening ? 'text-[#7B2CF5]' : 'text-slate-400 hover:text-[#7B2CF5]'}`}
+              className={`absolute right-3 top-1/2 -translate-y-1/2 transition-colors ${isListening ? 'text-[#7B2CF5]' : 'text-[#B4B4B4] hover:text-[#7B2CF5]'}`}
               title="Pesquisar por Voz"
             >
               {isListening ? <Mic className="w-5 h-5 animate-pulse" /> : <MicOff className="w-5 h-5" />}
@@ -143,7 +143,7 @@ export const Invoices: React.FC = () => {
                 <th className="px-6 py-4 font-medium text-right">Ações</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-slate-100">
+            <tbody className="divide-y divide-[#27272A]">
               {filtered.map(inv => (
                 <tr key={inv.id} className="hover:bg-[#0A0A0A] transition-colors">
                   <td className="px-6 py-4 font-medium text-[#7B2CF5]">{inv.numero_fatura}</td>
@@ -163,7 +163,7 @@ export const Invoices: React.FC = () => {
                   <td className="px-6 py-4 text-right">
                     <button 
                       onClick={() => setPreviewFatura(inv)}
-                      className="p-1.5 text-slate-400 hover:text-[#7B2CF5] rounded-md hover:bg-[#18181A] transition-colors"
+                      className="p-1.5 text-[#B4B4B4] hover:text-[#7B2CF5] rounded-md hover:bg-[#18181A] transition-colors"
                     >
                       <Eye className="w-4 h-4" />
                     </button>
@@ -193,7 +193,7 @@ export const Invoices: React.FC = () => {
               <h3 className="text-xl font-bold text-[#FFFFFF]">Adicionar Fatura</h3>
               <button 
                 onClick={() => setIsModalOpen(false)}
-                className="text-slate-400 hover:text-[#B4B4B4] transition-colors"
+                className="text-[#B4B4B4] hover:text-[#B4B4B4] transition-colors"
               >
                 <X className="w-5 h-5" />
               </button>
@@ -232,7 +232,7 @@ export const Invoices: React.FC = () => {
                       <button 
                         type="button"
                         onClick={handleAddProduct}
-                        className="bg-[#27272A] hover:bg-slate-300 text-[#B4B4B4] px-4 py-2 rounded-lg font-medium transition-colors"
+                        className="bg-[#27272A] hover:bg-[#27272A] text-[#B4B4B4] px-4 py-2 rounded-lg font-medium transition-colors"
                       >
                         Adicionar
                       </button>
@@ -295,7 +295,7 @@ export const Invoices: React.FC = () => {
                 <button 
                   type="submit"
                   disabled={!selectedCliente || selectedProducts.length === 0}
-                  className="bg-[#10B981] hover:bg-emerald-600 disabled:opacity-50 disabled:cursor-not-allowed text-white px-6 py-2 rounded-lg font-medium transition-colors shadow-sm">
+                  className="bg-[#10B981] hover:bg-[#10B981]/90 disabled:opacity-50 disabled:cursor-not-allowed text-white px-6 py-2 rounded-lg font-medium transition-colors shadow-sm">
                   Confirmar Fatura
                 </button>
               </div>

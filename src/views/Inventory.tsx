@@ -170,7 +170,7 @@ export const Inventory: React.FC = () => {
           />
           <button 
             onClick={() => setIsModalOpen(true)}
-            className="bg-[#7B2CF5] hover:bg-purple-700 text-white px-4 py-2 rounded-lg font-medium flex items-center gap-2 transition-colors"
+            className="bg-[#7B2CF5] hover:bg-[#7B2CF5]/90 text-white px-4 py-2 rounded-lg font-medium flex items-center gap-2 transition-colors"
           >
             <Plus className="w-5 h-5" /> Adicionar Artigo
           </button>
@@ -379,7 +379,7 @@ export const Inventory: React.FC = () => {
                 </button>
                 <button 
                   type="submit"
-                  className="px-6 py-2 bg-[#10B981] hover:bg-emerald-600 text-white rounded-lg font-medium flex items-center gap-2 transition-colors"
+                  className="px-6 py-2 bg-[#10B981] hover:bg-[#10B981]/90 text-white rounded-lg font-medium flex items-center gap-2 transition-colors"
                 >
                   <Save className="w-5 h-5" /> Guardar
                 </button>

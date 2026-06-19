@@ -62,7 +62,7 @@ export const Layout: React.FC<LayoutProps> = ({ children, activeView, onNavigate
                 className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg transition-colors ${
                   isActive 
                     ? 'bg-[#7B2CF5] text-white' 
-                    : 'text-slate-300 hover:bg-slate-800 hover:text-white'
+                    : 'text-[#B4B4B4] hover:bg-[#27272A] hover:text-white'
                 }`}
               >
                 <Icon className="h-5 w-5" />
@@ -71,9 +71,9 @@ export const Layout: React.FC<LayoutProps> = ({ children, activeView, onNavigate
             );
           })}
         </nav>
-        <div className="p-4 text-xs text-[#B4B4B4] border-t border-slate-800">
+        <div className="p-4 text-xs text-[#B4B4B4] border-t border-[#27272A]">
           Gerenciado e desenvolvido pelo<br />
-          <span className="font-semibold text-slate-400 mt-1 block">grupo 90 Creations</span>
+          <span className="font-semibold text-[#B4B4B4] mt-1 block">grupo 90 Creations</span>
         </div>
       </aside>
 
@@ -106,7 +106,7 @@ export const Layout: React.FC<LayoutProps> = ({ children, activeView, onNavigate
                 className={`w-full flex items-center gap-3 px-4 py-4 rounded-lg text-lg ${
                   activeView === item.id 
                     ? 'bg-[#7B2CF5] text-white' 
-                    : 'text-slate-300'
+                    : 'text-[#B4B4B4]'
                 }`}
               >
                 <Icon className="h-6 w-6" />
