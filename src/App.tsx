@@ -27,19 +27,41 @@ function Splash() {
   );
 }
 
+import { supabase, hasSupabaseConfig } from './lib/supabase';
+
 function Login({ onLogin }: { onLogin: () => void }) {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
-  const { settings } = useApp();
+  const [isLoading, setIsLoading] = useState(false);
 
-  const handleLogin = (e: React.FormEvent) => {
+  const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
-    const correctPassword = settings.senha_admin || '123456';
-    if (username === 'admin' && password === correctPassword) {
-      onLogin();
-    } else {
-      setError('Credenciais inválidas. Verifique os dados fornecidos.');
+    setError('');
+    setIsLoading(true);
+
+    const correctUser = 'DaysB';
+    const correctPassword = 'gestoke90admin';
+
+    try {
+      if (hasSupabaseConfig && supabase) {
+        // Ping supabase to confirm connection
+        const { error: pingError } = await supabase.from('produtos').select('id').limit(1);
+        if (pingError) {
+          console.warn('Supabase ping error (might be missing tables):', pingError);
+        }
+      }
+
+      if (username === correctUser && password === correctPassword) {
+        onLogin();
+      } else {
+        setError('Credenciais inválidas. Verifique os dados fornecidos.');
+      }
+    } catch (err) {
+      console.error(err);
+      setError('Erro de conexão. Tente novamente mais tarde.');
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -50,6 +72,9 @@ function Login({ onLogin }: { onLogin: () => void }) {
         <h2 className="mt-6 text-center text-3xl font-extrabold text-white">
           Entrar no GESTOKE
         </h2>
+        <p className="mt-2 text-sm text-[#B4B4B4]">
+          Acesso Total / Administrador
+        </p>
       </div>
 
       <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-md">
@@ -69,7 +94,8 @@ function Login({ onLogin }: { onLogin: () => void }) {
                   value={username}
                   onChange={(e) => setUsername(e.target.value)}
                   className="bg-[#0A0A0A] border-[#27272A] text-white block w-full pl-10 sm:text-sm border rounded-lg py-3 focus:ring-[#7B2CF5] focus:border-[#7B2CF5] outline-none transition-colors"
-                  placeholder="admin"
+                  placeholder="DaysB"
+                  disabled={isLoading}
                 />
               </div>
             </div>
@@ -88,7 +114,8 @@ function Login({ onLogin }: { onLogin: () => void }) {
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   className="bg-[#0A0A0A] border-[#27272A] text-white block w-full pl-10 sm:text-sm border rounded-lg py-3 focus:ring-[#7B2CF5] focus:border-[#7B2CF5] outline-none transition-colors"
-                  placeholder="••••••"
+                  placeholder="••••••••"
+                  disabled={isLoading}
                 />
               </div>
             </div>
@@ -102,9 +129,10 @@ function Login({ onLogin }: { onLogin: () => void }) {
             <div>
               <button
                 type="submit"
-                className="w-full flex justify-center py-3 px-4 border border-transparent rounded-lg shadow-sm text-sm font-medium text-white bg-[#7B2CF5] hover:bg-[#7B2CF5]/90 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#7B2CF5] transition-colors"
+                disabled={isLoading}
+                className="w-full flex justify-center py-3 px-4 border border-transparent rounded-lg shadow-sm text-sm font-medium text-white bg-[#7B2CF5] hover:bg-[#7B2CF5]/90 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#7B2CF5] transition-colors disabled:opacity-50"
               >
-                Acessar Sistema
+                {isLoading ? 'Conectando...' : 'Acessar Sistema'}
               </button>
             </div>
           </form>

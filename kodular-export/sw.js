@@ -1,5 +1,6 @@
-const CACHE_NAME = 'gestoke-cache-v2';
+const CACHE_NAME = 'gestoke-cache-v3';
 
+// Vamos interceptar as respostas dinâmicas do html/css/js no fly ou podemos apenas forçar as root URLs aqui
 const STATIC_ASSETS = [
   './',
   './index.html',
@@ -42,10 +43,23 @@ self.addEventListener('fetch', event => {
   // Não interceptar chamadas para a API do Supabase (para evitar cache de dados dinâmicos)
   if (url.hostname.includes('supabase.co')) return;
 
+  // Cache First Strategy
   event.respondWith(
     caches.match(event.request).then(cachedResponse => {
-      const fetchPromise = fetch(event.request).then(networkResponse => {
-        // Adiciona/Atualiza o cache com a nova resposta
+      if (cachedResponse) {
+        // Se temos no cache, vamos devolver imediatamente
+        // E podemos opcionalmente atualizar em background
+        fetch(event.request).then(networkResponse => {
+          if (networkResponse && networkResponse.status === 200 && networkResponse.type === 'basic') {
+            const responseToCache = networkResponse.clone();
+            caches.open(CACHE_NAME).then(cache => cache.put(event.request, responseToCache));
+          }
+        }).catch(() => {});
+        return cachedResponse;
+      }
+
+      // Se não temos no cache, vamos à rede, e depois cachedamos para as próximas vezes
+      return fetch(event.request).then(networkResponse => {
         if (networkResponse && networkResponse.status === 200 && networkResponse.type === 'basic') {
           const responseToCache = networkResponse.clone();
           caches.open(CACHE_NAME).then(cache => cache.put(event.request, responseToCache));
@@ -53,15 +67,12 @@ self.addEventListener('fetch', event => {
         return networkResponse;
       }).catch(error => {
         console.warn('Fetch failed, returning offline fallback for:', event.request.url);
-        // Se a requisição falhar (offline) e for de navegação, retorna a página index
+        // Fallback offline (se for html de navegação)
         if (event.request.mode === 'navigate') {
           return caches.match('./index.html');
         }
         throw error;
       });
-
-      // Retorna em cache (rápido) e atualiza em background (stale-while-revalidate)
-      return cachedResponse || fetchPromise;
     })
   );
 });

@@ -71,9 +71,16 @@ export const Layout: React.FC<LayoutProps> = ({ children, activeView, onNavigate
             );
           })}
         </nav>
-        <div className="p-4 text-xs text-[#B4B4B4] border-t border-[#27272A]">
-          Gerenciado e desenvolvido pelo<br />
-          <span className="font-semibold text-[#B4B4B4] mt-1 block">grupo 90 Creations</span>
+        <div className="p-4 border-t border-[#27272A] bg-[#0A0A0A]">
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 rounded-full bg-[#7B2CF5]/20 flex items-center justify-center text-[#7B2CF5] font-bold">
+              A
+            </div>
+            <div className="flex flex-col">
+              <span className="text-sm font-semibold text-white">Administrador GESTOKE</span>
+              <span className="text-xs text-[#B4B4B4]">Acesso Total</span>
+            </div>
+          </div>
         </div>
       </aside>
 
