@@ -1,6 +1,6 @@
 import React, { useRef, useState } from 'react';
 import { useApp } from '../context/AppContext';
-import { Package, Plus, Search, Edit2, Trash2, X, AlertTriangle, Download, Upload, ScanLine, QrCode, Mic, MicOff, Printer } from 'lucide-react';
+import { Package, Plus, Search, Edit2, Trash2, X, AlertTriangle, Download, Upload, ScanLine, QrCode, Mic, MicOff, Printer, Save } from 'lucide-react';
 import { BarcodeScannerModal } from '../components/BarcodeScannerModal';
 import { ProductQRCodeModal } from '../components/ProductQRCodeModal';
 import { Produto } from '../types';
@@ -21,6 +21,7 @@ export const Inventory: React.FC = () => {
 
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isScannerOpen, setIsScannerOpen] = useState(false);
+  const [scanDestination, setScanDestination] = useState<'search' | 'new_product'>('search');
   const [qrProduct, setQrProduct] = useState<Produto | null>(null);
   const [showLowEstoqueOnly, setShowLowEstoqueOnly] = useState(false);
   const [newProduto, setNewProduto] = useState({
@@ -36,8 +37,10 @@ export const Inventory: React.FC = () => {
   const lowEstoqueCount = produtos.filter(p => p.quantidade <= lowEstoqueThreshold).length;
 
   const filtered = produtos.filter(p => {
-    const matchesSearch = p.nome.toLowerCase().includes(searchTerm.toLowerCase()) || 
-                          p.codigo.toLowerCase().includes(searchTerm.toLowerCase());
+    const nome = p.nome || '';
+    const codigo = p.codigo || '';
+    const matchesSearch = nome.toLowerCase().includes(searchTerm.toLowerCase()) || 
+                          codigo.toLowerCase().includes(searchTerm.toLowerCase());
     const matchesLowEstoque = showLowEstoqueOnly ? p.quantidade <= lowEstoqueThreshold : true;
     return matchesSearch && matchesLowEstoque;
   });
@@ -200,7 +203,10 @@ export const Inventory: React.FC = () => {
             </div>
           </div>
           <button 
-            onClick={() => setIsScannerOpen(true)}
+            onClick={() => {
+              setScanDestination('search');
+              setIsScannerOpen(true);
+            }}
             className="bg-[#27272A] hover:bg-[#3f3f46] text-white px-4 py-2 rounded-lg flex items-center gap-2 transition-colors"
             title="Scan Barcode"
           >
@@ -223,7 +229,7 @@ export const Inventory: React.FC = () => {
             </thead>
             <tbody className="divide-y divide-[#27272A]">
               {filtered.map(product => {
-                const isLow = product.quantidade <= lowStockThreshold;
+                const isLow = product.quantidade <= lowEstoqueThreshold;
                 return (
                   <tr key={product.id} className={`transition-colors text-[#FFFFFF] ${isLow ? 'bg-[#F59E0B]/5 hover:bg-[#F59E0B]/10' : 'hover:bg-[#27272A]/50'}`}>
                     <td className="px-6 py-4">
@@ -318,13 +324,28 @@ export const Inventory: React.FC = () => {
               <div className="grid grid-cols-2 gap-4">
                 <div>
                   <label className="block text-sm font-medium text-[#B4B4B4] mb-1">Código</label>
-                  <input 
-                    type="text" 
-                    required
-                    value={newProduto.codigo}
-                    onChange={(e) => setNewProduto({...newProduto, codigo: e.target.value})}
-                    className="w-full px-3 py-2 bg-[#18181A] border border-[#27272A] text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-[#7B2CF5]"
-                  />
+                  <div className="flex gap-2">
+                    <input 
+                      type="text" 
+                      required
+                      value={newProduto.codigo}
+                      onChange={(e) => setNewProduto({...newProduto, codigo: e.target.value})}
+                      className="w-full px-3 py-2 bg-[#18181A] border border-[#27272A] text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-[#7B2CF5]"
+                    />
+                    <button 
+                      type="button"
+                      onClick={() => {
+                        setIsModalOpen(false);
+                        // Using scanner for new product
+                        // Wait, if I close the modal, I lose the state if it's not saved? No, because newProduto is in standard state
+                        setScanDestination('new_product');
+                        setIsScannerOpen(true);
+                      }}
+                      className="bg-[#27272A] hover:bg-[#3f3f46] text-[#B4B4B4] px-3 py-2 rounded-lg transition-colors border border-[#27272A]"
+                    >
+                      <ScanLine className="w-5 h-5" />
+                    </button>
+                  </div>
                 </div>
                 <div>
                   <label className="block text-sm font-medium text-[#B4B4B4] mb-1">Categoria</label>
@@ -390,8 +411,20 @@ export const Inventory: React.FC = () => {
       )}
       {isScannerOpen && (
         <BarcodeScannerModal 
-          onScan={(text) => setSearchTerm(text)}
-          onClose={() => setIsScannerOpen(false)}
+          onScan={(text) => {
+            if (scanDestination === 'search') {
+              setSearchTerm(text);
+            } else if (scanDestination === 'new_product') {
+              setNewProduto({...newProduto, codigo: text});
+              setIsModalOpen(true);
+            }
+          }}
+          onClose={() => {
+            setIsScannerOpen(false);
+            if (scanDestination === 'new_product') {
+              setIsModalOpen(true); // reopen the modal when closed
+            }
+          }}
         />
       )}
 

@@ -14,10 +14,12 @@ export const Suppliers: React.FC = () => {
     endereco: ''
   });
 
-  const filtered = fornecedores.filter(s => 
-    s.nome.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    s.email.toLowerCase().includes(searchTerm.toLowerCase())
-  );
+  const filtered = fornecedores.filter(s => {
+    const nome = s.nome || '';
+    const email = s.email || '';
+    return nome.toLowerCase().includes(searchTerm.toLowerCase()) ||
+           email.toLowerCase().includes(searchTerm.toLowerCase());
+  });
 
   const handleAddFornecedor = async (e: React.FormEvent) => {
     e.preventDefault();

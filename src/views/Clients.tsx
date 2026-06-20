@@ -14,10 +14,12 @@ export const Clients: React.FC = () => {
     endereco: ''
   });
 
-  const filtered = clientes.filter(c => 
-    c.nome.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    c.email.toLowerCase().includes(searchTerm.toLowerCase())
-  );
+  const filtered = clientes.filter(c => {
+    const nome = c.nome || '';
+    const email = c.email || '';
+    return nome.toLowerCase().includes(searchTerm.toLowerCase()) ||
+           email.toLowerCase().includes(searchTerm.toLowerCase());
+  });
 
   const handleAddCliente = async (e: React.FormEvent) => {
     e.preventDefault();

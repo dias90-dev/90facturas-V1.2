@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useApp } from '../context/AppContext';
 import { 
   LayoutDashboard, 
@@ -7,7 +8,7 @@ import {
   Truck, 
   FileText, 
   BarChart3, 
-  Settings,
+  Settings as SettingsIcon,
   Menu,
   X
 } from 'lucide-react';
@@ -19,17 +20,18 @@ interface LayoutProps {
 }
 
 export const Layout: React.FC<LayoutProps> = ({ children, activeView, onNavigate }) => {
+  const { t } = useTranslation();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const { settings } = useApp();
 
   const navItems = [
-    { id: 'dashboard', label: 'Dashboard', icon: LayoutDashboard },
-    { id: 'inventory', label: 'Inventário (Estoque)', icon: Package },
-    { id: 'invoices', label: 'Faturas', icon: FileText },
-    { id: 'clients', label: 'Clientes', icon: Users },
-    { id: 'suppliers', label: 'Fornecedores', icon: Truck },
-    { id: 'reports', label: 'Relatórios', icon: BarChart3 },
-    { id: 'settings', label: 'Configurações', icon: Settings },
+    { id: 'dashboard', label: t('menu.dashboard'), icon: LayoutDashboard },
+    { id: 'inventory', label: t('menu.inventory'), icon: Package },
+    { id: 'invoices', label: t('menu.invoices'), icon: FileText },
+    { id: 'clients', label: t('menu.clients'), icon: Users },
+    { id: 'suppliers', label: t('menu.suppliers'), icon: Truck },
+    { id: 'reports', label: t('menu.reports'), icon: BarChart3 },
+    { id: 'settings', label: t('menu.settings'), icon: SettingsIcon },
   ];
 
   const handleNav = (id: string) => {
@@ -46,7 +48,7 @@ export const Layout: React.FC<LayoutProps> = ({ children, activeView, onNavigate
             <img src={settings.logotipo} alt={settings.nome_loja} className="max-h-full max-w-full object-contain" />
           ) : (
             <h1 className="text-2xl font-bold tracking-tight text-white flex items-center gap-2">
-              <Package className="h-6 w-6 text-purple-500" />
+              <Package className="h-6 w-6 text-[#7B2CF5]" />
               GESTOKE
             </h1>
           )}
@@ -77,8 +79,8 @@ export const Layout: React.FC<LayoutProps> = ({ children, activeView, onNavigate
               A
             </div>
             <div className="flex flex-col">
-              <span className="text-sm font-semibold text-white">Administrador GESTOKE</span>
-              <span className="text-xs text-[#B4B4B4]">Acesso Total</span>
+              <span className="text-sm font-semibold text-white">{t('common.adminName')}</span>
+              <span className="text-xs text-[#B4B4B4]">{t('common.fullAccess')}</span>
             </div>
           </div>
         </div>
@@ -91,7 +93,7 @@ export const Layout: React.FC<LayoutProps> = ({ children, activeView, onNavigate
             <img src={settings.logotipo} alt={settings.nome_loja} className="max-h-full max-w-full object-contain" />
           ) : (
             <>
-              <Package className="h-6 w-6 text-purple-500" />
+              <Package className="h-6 w-6 text-[#7B2CF5]" />
               GESTOKE
             </>
           )}

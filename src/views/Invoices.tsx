@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useApp } from '../context/AppContext';
-import { FileText, Plus, Search, Eye, X, Trash2, ScanLine, Mic, MicOff } from 'lucide-react';
+import { FileText, Plus, Search, Eye, X, Trash2, ScanLine, Mic, MicOff, Download } from 'lucide-react';
 import { InvoicePrintModal } from '../components/InvoicePrintModal';
 import { BarcodeScannerModal } from '../components/BarcodeScannerModal';
 import { Fatura } from '../types';
@@ -33,13 +33,41 @@ export const Invoices: React.FC = () => {
 
   const currentTotal = selectedProducts.reduce((acc, item) => acc + (getProductPrice(item.produto_id) * item.quantidade), 0);
 
-  const filtered = faturas.filter(inv => 
-    inv.numero_fatura.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    getClientName(inv.cliente_id).toLowerCase().includes(searchTerm.toLowerCase())
-  );
+  const filtered = faturas.filter(inv => {
+    const numero_fatura = inv.numero_fatura || '';
+    return numero_fatura.toLowerCase().includes(searchTerm.toLowerCase()) ||
+           getClientName(inv.cliente_id).toLowerCase().includes(searchTerm.toLowerCase());
+  });
 
   const formatKz = (value: number) => {
     return new Intl.NumberFormat('pt-AO', { style: 'currency', currency: 'AOA' }).format(value);
+  };
+
+  const exportCSV = () => {
+    const headers = ['ID', 'Nº Fatura', 'Cliente', 'Data', 'Estado', 'Total', 'Forma Pagamento'];
+    const csvContent = [
+      headers.join(','),
+      ...faturas.map(inv => 
+        [
+          inv.id, 
+          `"${inv.numero_fatura}"`, 
+          `"${getClientName(inv.cliente_id)}"`, 
+          `"${new Date(inv.data).toLocaleDateString('pt-AO')}"`, 
+          `"${inv.estado}"`, 
+          inv.total, 
+          `"${inv.forma_pagamento}"`
+        ].join(',')
+      )
+    ].join('\n');
+
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.setAttribute('download', `faturas_${new Date().toISOString().split('T')[0]}.csv`);
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
   };
 
   const handleAddProduct = () => {
@@ -101,12 +129,20 @@ export const Invoices: React.FC = () => {
           <h2 className="text-2xl font-bold tracking-tight">Faturas</h2>
           <p className="text-[#B4B4B4]">Gestão de faturação</p>
         </div>
-        <button 
-          onClick={() => setIsModalOpen(true)}
-          className="bg-[#7B2CF5] hover:bg-indigo-700 text-white px-4 py-2 rounded-lg font-medium flex items-center gap-2 transition-colors"
-        >
-          <Plus className="w-5 h-5" /> Nova Fatura
-        </button>
+        <div className="flex flex-wrap gap-2 print:hidden">
+          <button 
+            onClick={exportCSV}
+            className="bg-[#18181A] hover:bg-[#27272A] text-[#B4B4B4] px-4 py-2 rounded-lg font-medium flex items-center gap-2 transition-colors"
+          >
+            <Download className="w-5 h-5" /> Exportar CSV
+          </button>
+          <button 
+            onClick={() => setIsModalOpen(true)}
+            className="bg-[#7B2CF5] hover:bg-[#7B2CF5]/90 text-white px-4 py-2 rounded-lg font-medium flex items-center gap-2 transition-colors"
+          >
+            <Plus className="w-5 h-5" /> Nova Fatura
+          </button>
+        </div>
       </div>
 
       <div className="bg-[#0A0A0A] rounded-xl shadow-sm border border-[#27272A] overflow-hidden">
